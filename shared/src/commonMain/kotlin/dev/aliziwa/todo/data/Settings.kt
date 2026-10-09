@@ -17,6 +17,8 @@ data class AppSettings(
     val dailyPromptEnabled: Boolean = true,
     val soundEnabled: Boolean = true,
     val launchAtLogin: Boolean = false,
+    /** Display preference only: 12-hour clock by default, 24-hour when the user asks for it. */
+    val use24HourClock: Boolean = false,
     /** ISO date of the last day the "plan your day" prompt was shown. */
     val lastDailyPromptDate: String? = null,
     /** Set to false by the 2-strike failure policy; the user re-enables it in settings. */
@@ -33,6 +35,7 @@ data class AppSettings(
         put(Keys.DAILY_PROMPT_ENABLED, dailyPromptEnabled.toString())
         put(Keys.SOUND_ENABLED, soundEnabled.toString())
         put(Keys.LAUNCH_AT_LOGIN, launchAtLogin.toString())
+        put(Keys.USE_24_HOUR_CLOCK, use24HourClock.toString())
         lastDailyPromptDate?.let { put(Keys.LAST_DAILY_PROMPT_DATE, it) }
         put(Keys.ASSISTANT_ENABLED, assistantEnabled.toString())
         put(Keys.GENERATION_TIMEOUT, generationTimeoutMillis.toString())
@@ -48,6 +51,7 @@ data class AppSettings(
         const val DAILY_PROMPT_ENABLED = "prompt.enabled"
         const val SOUND_ENABLED = "sound.enabled"
         const val LAUNCH_AT_LOGIN = "system.launchAtLogin"
+        const val USE_24_HOUR_CLOCK = "display.use24HourClock"
         const val LAST_DAILY_PROMPT_DATE = "prompt.lastShownDate"
         const val ASSISTANT_ENABLED = "assistant.enabled"
         const val GENERATION_TIMEOUT = "assistant.timeoutMillis"
@@ -71,6 +75,8 @@ data class AppSettings(
                     ?: defaults.dailyPromptEnabled,
                 soundEnabled = values[Keys.SOUND_ENABLED]?.toBooleanStrictOrNull() ?: defaults.soundEnabled,
                 launchAtLogin = values[Keys.LAUNCH_AT_LOGIN]?.toBooleanStrictOrNull() ?: defaults.launchAtLogin,
+                use24HourClock = values[Keys.USE_24_HOUR_CLOCK]?.toBooleanStrictOrNull()
+                    ?: defaults.use24HourClock,
                 lastDailyPromptDate = values[Keys.LAST_DAILY_PROMPT_DATE]?.takeIf { it.isNotBlank() },
                 assistantEnabled = values[Keys.ASSISTANT_ENABLED]?.toBooleanStrictOrNull()
                     ?: defaults.assistantEnabled,

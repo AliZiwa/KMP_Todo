@@ -1,44 +1,51 @@
 package dev.aliziwa.todo.ui
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.outlined.DeleteOutline
 import androidx.compose.material3.Button
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import dev.aliziwa.todo.domain.DateMath
 import dev.aliziwa.todo.domain.Priority
 import dev.aliziwa.todo.domain.TaskDraft
 import dev.aliziwa.todo.domain.TaskItem
 import dev.aliziwa.todo.domain.TaskScope
 import dev.aliziwa.todo.domain.TaskStatus
-import dev.aliziwa.todo.domain.DateMath
-import dev.aliziwa.todo.util.Format
 import kotlinx.datetime.LocalDate
 
-private class QuickRow(var title: String, var timeMinutes: Int?, var priority: Priority)
+private class QuickRow(val title: String, val timeMinutes: Int?, val priority: Priority)
 
 /**
  * The morning "Plan your day" sheet: shows what is already on today's plate and lets the user
- * quick-add several tasks in one go.
+ * quick-add several tasks in one go, each with the shared time picker.
  */
 @Composable
 fun PlanDayScreen(
@@ -48,48 +55,106 @@ fun PlanDayScreen(
     onAddAll: (List<TaskDraft>) -> Unit,
     onClose: () -> Unit,
     modifier: Modifier = Modifier,
+    nowMinutes: Int? = null,
 ) {
+    val palette = LocalTodoPalette.current
     val rows = remember { mutableStateListOf(QuickRow("", null, Priority.MEDIUM)) }
 
     Column(
-        modifier = modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 18.dp, vertical = 12.dp),
+        verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
-        Text("Plan your day", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.SemiBold)
-        Text(
-            DateMath.shortLabel(today),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
+        Surface(shape = MaterialTheme.shapes.large, color = MaterialTheme.colorScheme.surfaceContainerLowest) {
+            Row(
+                Modifier.background(palette.headerBrush).fillMaxWidth().padding(20.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Column(Modifier.weight(1f)) {
+                    Text("Plan your day", style = MaterialTheme.typography.headlineMedium)
+                    Spacer(Modifier.height(4.dp))
+                    Text(
+                        DateMath.shortLabel(today),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+                EmptyIllustration(
+                    art = EmptyArt.SPARKLE,
+                    modifier = Modifier.size(72.dp),
+                    primary = MaterialTheme.colorScheme.primary,
+                    secondary = palette.low,
+                    accent = palette.medium,
+                    soft = MaterialTheme.colorScheme.surfaceContainerLowest.copy(alpha = 0.6f),
+                )
+            }
+        }
 
         val pending = existing.filter { it.status == TaskStatus.PENDING }
         if (pending.isNotEmpty()) {
-            SectionHeader("Already on today (${pending.size})")
-            pending.take(8).forEach { item ->
-                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                    PriorityBadge(item.priority)
-                    Text(item.title, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
-                    CountdownChip(item, nowMillis)
+            Surface(
+                shape = MaterialTheme.shapes.medium,
+                color = MaterialTheme.colorScheme.surfaceContainerLowest,
+                shadowElevation = 1.dp,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Column(Modifier.padding(horizontal = 16.dp, vertical = 6.dp)) {
+                    SectionHeader("Already on today (${pending.size})")
+                    pending.take(8).forEach { item ->
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            modifier = Modifier.padding(vertical = 5.dp),
+                        ) {
+                            PriorityBadge(item.priority)
+                            Text(
+                                item.title,
+                                style = MaterialTheme.typography.bodyLarge,
+                                modifier = Modifier.weight(1f),
+                            )
+                            CountdownChip(item, nowMillis)
+                        }
+                    }
+                    Spacer(Modifier.height(8.dp))
                 }
             }
         }
 
-        SectionHeader("Add to today")
-        rows.forEachIndexed { index, row ->
-            QuickAddRow(
-                row = row,
-                onChange = { title, time, priority ->
-                    rows[index] = QuickRow(title, time, priority)
-                },
-            )
+        Surface(
+            shape = MaterialTheme.shapes.medium,
+            color = MaterialTheme.colorScheme.surfaceContainerLowest,
+            shadowElevation = 1.dp,
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Column(Modifier.padding(horizontal = 16.dp, vertical = 6.dp)) {
+                SectionHeader("What's the plan?")
+                rows.forEachIndexed { index, row ->
+                    QuickAddRow(
+                        row = row,
+                        nowMinutes = nowMinutes,
+                        canRemove = rows.size > 1,
+                        onRemove = { rows.removeAt(index) },
+                        onChange = { title, time, priority -> rows[index] = QuickRow(title, time, priority) },
+                    )
+                }
+                Spacer(Modifier.height(10.dp))
+                TextButton(onClick = { rows.add(QuickRow("", null, Priority.MEDIUM)) }, shape = Pill) {
+                    Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(18.dp))
+                    Spacer(Modifier.width(6.dp))
+                    Text("Another one")
+                }
+                Spacer(Modifier.height(6.dp))
+            }
         }
 
-        OutlinedButton(onClick = { rows.add(QuickRow("", null, Priority.MEDIUM)) }) {
-            Icon(Icons.Default.Add, contentDescription = null)
-            Text("Another task", modifier = Modifier.padding(start = 6.dp))
-        }
-
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp),
+        ) {
+            val interaction = remember { MutableInteractionSource() }
             Button(
                 onClick = {
                     val drafts = rows.filter { it.title.isNotBlank() }.map {
@@ -104,42 +169,68 @@ fun PlanDayScreen(
                     onAddAll(drafts)
                 },
                 enabled = rows.any { it.title.isNotBlank() },
-                modifier = Modifier.weight(1f),
-            ) { Text("Add to today") }
-            OutlinedButton(onClick = onClose) { Text("Not now") }
+                shape = Pill,
+                interactionSource = interaction,
+                modifier = Modifier.weight(1f).height(52.dp).bouncyPress(interaction),
+            ) {
+                Icon(Icons.Default.Check, contentDescription = null, modifier = Modifier.size(20.dp))
+                Spacer(Modifier.width(8.dp))
+                Text("Add to today", style = MaterialTheme.typography.titleMedium)
+            }
+            TextButton(onClick = onClose, shape = Pill) { Text("Not now") }
         }
     }
 }
 
 @Composable
-private fun QuickAddRow(row: QuickRow, onChange: (String, Int?, Priority) -> Unit) {
-    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        OutlinedTextField(
-            value = row.title,
-            onValueChange = { onChange(it, row.timeMinutes, row.priority) },
-            label = { Text("Task") },
-            singleLine = true,
-            modifier = Modifier.fillMaxWidth(),
-        )
-        FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-            FilterChip(
-                selected = row.timeMinutes == null,
-                onClick = { onChange(row.title, null, row.priority) },
-                label = { Text("No time") },
+private fun QuickAddRow(
+    row: QuickRow,
+    nowMinutes: Int?,
+    canRemove: Boolean,
+    onRemove: () -> Unit,
+    onChange: (String, Int?, Priority) -> Unit,
+) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(10.dp),
+        modifier = Modifier.padding(vertical = 8.dp),
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            OutlinedTextField(
+                value = row.title,
+                onValueChange = { onChange(it, row.timeMinutes, row.priority) },
+                label = { Text("Task") },
+                singleLine = true,
+                shape = MaterialTheme.shapes.small,
+                modifier = Modifier.weight(1f),
             )
-            listOf(9 * 60, 12 * 60, 15 * 60, 18 * 60).forEach { minutes ->
-                FilterChip(
-                    selected = row.timeMinutes == minutes,
-                    onClick = { onChange(row.title, minutes, row.priority) },
-                    label = { Text(Format.timeOfDay(minutes)) },
-                )
+            if (canRemove) {
+                IconButton(onClick = onRemove) {
+                    Icon(
+                        Icons.Outlined.DeleteOutline,
+                        contentDescription = "Remove this line",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
             }
-            Priority.entries.reversed().forEach { priority ->
-                FilterChip(
-                    selected = row.priority == priority,
-                    onClick = { onChange(row.title, row.timeMinutes, priority) },
-                    label = { Text(priority.name.take(1) + priority.name.drop(1).lowercase()) },
-                )
+        }
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            TimePickerField(
+                minutes = row.timeMinutes,
+                onChange = { onChange(row.title, it, row.priority) },
+                nowMinutes = nowMinutes,
+            )
+            Spacer(Modifier.width(12.dp))
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp),
+            ) {
+                Priority.entries.reversed().forEach { priority ->
+                    SelectableChip(
+                        text = priority.name.lowercase().replaceFirstChar { it.uppercase() },
+                        selected = row.priority == priority,
+                        onClick = { onChange(row.title, row.timeMinutes, priority) },
+                    )
+                }
             }
         }
     }

@@ -1,6 +1,15 @@
 package dev.aliziwa.todo.ui
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
@@ -8,30 +17,35 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.outlined.DeleteOutline
 import androidx.compose.material3.Button
-import androidx.compose.material3.FilterChip
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.text.KeyboardOptions
-import dev.aliziwa.todo.domain.DateMath
 import dev.aliziwa.todo.domain.Priority
 import dev.aliziwa.todo.domain.TaskDraft
 import dev.aliziwa.todo.domain.TaskScope
 import dev.aliziwa.todo.domain.TaskValidation
-import dev.aliziwa.todo.util.Format
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
@@ -39,8 +53,8 @@ import kotlinx.datetime.next
 import kotlinx.datetime.plus
 
 /**
- * Task editor used for both add and edit. Deliberately uses chips + text fields rather than the
- * Material date/time pickers so it stays compact at phone width and predictable on desktop.
+ * Task editor used for both add and edit. Grouped cards; the date and time are entered with the
+ * shared [DatePickerField] / [TimePickerField] so there is one way to pick a time in the app.
  */
 @Composable
 fun TaskEditorForm(
@@ -51,17 +65,20 @@ fun TaskEditorForm(
     onCancel: () -> Unit,
     onDelete: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
+    /** Minutes-of-day right now, so the time picker can offer "+15m" / "+1h". */
+    nowMinutes: Int? = null,
+    /** Opens the time picker immediately — used by screenshot tests and the "set a time" CTA. */
+    openTimePicker: Boolean = false,
 ) {
     var title by remember(initial) { mutableStateOf(initial.title) }
     var notes by remember(initial) { mutableStateOf(initial.notes) }
     var priority by remember(initial) { mutableStateOf(initial.priority) }
     var scope by remember(initial) { mutableStateOf(initial.scope) }
     var date by remember(initial) { mutableStateOf(initial.date ?: today) }
-    var dateText by remember(initial) { mutableStateOf((initial.date ?: today).toString()) }
     var timeMinutes by remember(initial) { mutableStateOf(initial.timeMinutes) }
-    var timeText by remember(initial) { mutableStateOf(initial.timeMinutes?.let { Format.timeOfDay(it) } ?: "") }
     var confirmRecurringDelete by remember(initial) { mutableStateOf(false) }
 
+    val palette = LocalTodoPalette.current
     val titleError = TaskValidation.normalizeTitle(title) == null
 
     if (confirmRecurringDelete && onDelete != null) {
@@ -73,127 +90,128 @@ fun TaskEditorForm(
     }
 
     Column(
-        modifier = modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 18.dp, vertical = 10.dp),
+        verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
-        OutlinedTextField(
-            value = title,
-            onValueChange = { if (it.length <= TaskValidation.MAX_TITLE_LENGTH) title = it },
-            label = { Text("Title") },
-            isError = titleError && title.isNotEmpty(),
-            supportingText = {
-                Text(if (titleError) "Required" else "${title.length}/${TaskValidation.MAX_TITLE_LENGTH}")
-            },
-            singleLine = true,
-            modifier = Modifier.fillMaxWidth(),
-        )
-
-        OutlinedTextField(
-            value = notes,
-            onValueChange = { notes = it },
-            label = { Text("Notes (optional)") },
-            minLines = 2,
-            maxLines = 5,
-            modifier = Modifier.fillMaxWidth(),
-        )
-
-        Text("Priority", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.SemiBold)
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Priority.entries.reversed().forEach { option ->
-                FilterChip(
-                    selected = priority == option,
-                    onClick = { priority = option },
-                    label = { Text(option.name.lowercase().replaceFirstChar { it.uppercase() }) },
-                )
-            }
+        EditorCard {
+            OutlinedTextField(
+                value = title,
+                onValueChange = { if (it.length <= TaskValidation.MAX_TITLE_LENGTH) title = it },
+                label = { Text("What needs doing?") },
+                isError = titleError && title.isNotEmpty(),
+                supportingText = {
+                    Text(if (titleError) "A title, however short" else "${title.length}/${TaskValidation.MAX_TITLE_LENGTH}")
+                },
+                singleLine = true,
+                shape = MaterialTheme.shapes.small,
+                textStyle = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.fillMaxWidth(),
+            )
+            OutlinedTextField(
+                value = notes,
+                onValueChange = { notes = it },
+                label = { Text("Notes (optional)") },
+                minLines = 2,
+                maxLines = 5,
+                shape = MaterialTheme.shapes.small,
+                modifier = Modifier.fillMaxWidth(),
+            )
         }
 
-        Text("Lives in", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.SemiBold)
-        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            TaskScope.entries.forEach { option ->
-                FilterChip(
-                    selected = scope == option,
-                    onClick = { scope = option },
-                    label = { Text(scopeLabel(option)) },
-                )
-            }
-        }
-
-        if (scope != TaskScope.RECURRING_DAILY) {
-            Text(dateLabelFor(scope), style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.SemiBold)
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                val options = datePresets(today, scope)
-                options.forEach { (label, value) ->
-                    FilterChip(
-                        selected = date == value,
-                        onClick = { date = value; dateText = value.toString() },
-                        label = { Text(label) },
+        EditorCard {
+            Text(
+                "How urgent?",
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Priority.entries.reversed().forEach { option ->
+                    PriorityChip(
+                        priority = option,
+                        selected = priority == option,
+                        onClick = { priority = option },
                     )
                 }
             }
-            OutlinedTextField(
-                value = dateText,
-                onValueChange = { text ->
-                    dateText = text
-                    DateMath.parseDate(text)?.let { date = it }
-                },
-                label = { Text("Date (YYYY-MM-DD)") },
-                isError = DateMath.parseDate(dateText) == null,
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth(),
-            )
-        } else {
+
+            Spacer(Modifier.height(2.dp))
             Text(
-                buildString {
-                    append("Repeats every day")
-                    timeMinutes?.let { append(" at ").append(Format.timeOfDay(it)) }
-                    append(". Ticking off or skipping today does not affect tomorrow; ")
-                    append("deleting it removes every future day.")
-                },
-                style = MaterialTheme.typography.bodySmall,
+                "Lives in",
+                style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-        }
-
-        Text(
-            if (scope == TaskScope.RECURRING_DAILY) "Time of day" else "Due time (optional)",
-            style = MaterialTheme.typography.labelLarge,
-            fontWeight = FontWeight.SemiBold,
-        )
-        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            FilterChip(
-                selected = timeMinutes == null,
-                onClick = { timeMinutes = null; timeText = "" },
-                label = { Text("No time") },
-            )
-            listOf(7 * 60, 9 * 60, 12 * 60, 15 * 60, 18 * 60, 20 * 60).forEach { minutes ->
-                FilterChip(
-                    selected = timeMinutes == minutes,
-                    onClick = { timeMinutes = minutes; timeText = Format.timeOfDay(minutes) },
-                    label = { Text(Format.timeOfDay(minutes)) },
-                )
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                TaskScope.entries.forEach { option ->
+                    SelectableChip(
+                        text = scopeLabel(option),
+                        selected = scope == option,
+                        onClick = { scope = option },
+                    )
+                }
             }
         }
-        OutlinedTextField(
-            value = timeText,
-            onValueChange = { text ->
-                timeText = text
-                timeMinutes = DateMath.parseTimeOfDay(text)
-            },
-            label = { Text("Time (HH:MM)") },
-            isError = timeText.isNotBlank() && DateMath.parseTimeOfDay(timeText) == null,
-            supportingText = if (scope == TaskScope.RECURRING_DAILY) {
-                { Text("The daily alarm time. Leave empty for no alarm.") }
-            } else {
-                null
-            },
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-            modifier = Modifier.fillMaxWidth(),
-        )
 
-        Spacer(Modifier.height(4.dp))
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
+        EditorCard {
+            AnimatedVisibility(
+                visible = scope != TaskScope.RECURRING_DAILY,
+                enter = fadeIn(tween(160)) + expandVertically(Motion.bouncyFinite()),
+                exit = fadeOut(tween(120)) + shrinkVertically(tween(160)),
+            ) {
+                DatePickerField(
+                    date = date,
+                    onChange = { date = it },
+                    presets = datePresets(today, scope),
+                    label = dateLabelFor(scope),
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 14.dp),
+                )
+            }
+
+            TimePickerField(
+                minutes = timeMinutes,
+                onChange = { timeMinutes = it },
+                label = if (scope == TaskScope.RECURRING_DAILY) "Time of day" else "Due time (optional)",
+                helper = if (scope == TaskScope.RECURRING_DAILY) {
+                    "The daily alarm time. \"No time\" means no alarm."
+                } else {
+                    "Set a time and you get a countdown plus a doorbell when it is due."
+                },
+                nowMinutes = nowMinutes,
+                initiallyOpen = openTimePicker,
+            )
+
+            AnimatedVisibility(
+                visible = scope == TaskScope.RECURRING_DAILY,
+                enter = fadeIn(tween(160)) + expandVertically(Motion.bouncyFinite()),
+                exit = fadeOut(tween(120)) + shrinkVertically(tween(160)),
+            ) {
+                Surface(
+                    color = palette.lowContainer,
+                    shape = MaterialTheme.shapes.small,
+                    modifier = Modifier.fillMaxWidth().padding(top = 14.dp),
+                ) {
+                    Text(
+                        "Repeats every day. Ticking off or skipping today does not affect tomorrow; " +
+                            "deleting it removes every future day.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = palette.onLow,
+                        modifier = Modifier.padding(12.dp),
+                    )
+                }
+            }
+        }
+
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth().padding(bottom = 6.dp),
+        ) {
+            val submitInteraction = remember { MutableInteractionSource() }
             Button(
                 onClick = {
                     onSubmit(
@@ -209,20 +227,90 @@ fun TaskEditorForm(
                     )
                 },
                 enabled = !titleError,
-                modifier = Modifier.weight(1f),
-            ) { Text(confirmLabel) }
-            OutlinedButton(onClick = onCancel) { Text("Cancel") }
-        }
-        if (onDelete != null) {
-            OutlinedButton(
-                onClick = {
-                    if (scope == TaskScope.RECURRING_DAILY) confirmRecurringDelete = true else onDelete()
-                },
-                modifier = Modifier.fillMaxWidth(),
+                shape = Pill,
+                interactionSource = submitInteraction,
+                modifier = Modifier
+                    .weight(1f)
+                    .height(52.dp)
+                    .bouncyPress(submitInteraction),
             ) {
-                Text(if (scope == TaskScope.RECURRING_DAILY) "Delete for all days" else "Delete task")
+                Icon(Icons.Default.Check, contentDescription = null, modifier = Modifier.size(20.dp))
+                Spacer(Modifier.width(8.dp))
+                Text(confirmLabel, style = MaterialTheme.typography.titleMedium)
+            }
+            TextButton(onClick = onCancel, shape = Pill) { Text("Cancel") }
+            if (onDelete != null) {
+                val deleteInteraction = remember { MutableInteractionSource() }
+                Surface(
+                    onClick = {
+                        if (scope == TaskScope.RECURRING_DAILY) confirmRecurringDelete = true else onDelete()
+                    },
+                    interactionSource = deleteInteraction,
+                    shape = Pill,
+                    color = palette.highContainer,
+                    modifier = Modifier.size(52.dp).bouncyPress(deleteInteraction),
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Icon(
+                            Icons.Outlined.DeleteOutline,
+                            contentDescription = if (scope == TaskScope.RECURRING_DAILY) {
+                                "Delete for all days"
+                            } else {
+                                "Delete task"
+                            },
+                            tint = palette.high,
+                        )
+                    }
+                }
             }
         }
+    }
+}
+
+@Composable
+private fun EditorCard(content: @Composable () -> Unit) {
+    Card(
+        shape = MaterialTheme.shapes.medium,
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Column(
+            Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) { content() }
+    }
+}
+
+@Composable
+private fun PriorityChip(priority: Priority, selected: Boolean, onClick: () -> Unit) {
+    val palette = LocalTodoPalette.current
+    val interaction = remember { MutableInteractionSource() }
+    val container by animateColorAsState(
+        if (selected) palette.spine(priority) else MaterialTheme.colorScheme.surfaceContainerHigh,
+        tween(180),
+        label = "priorityChip",
+    )
+    val pop = rememberPop(selected, peak = if (selected) 1.12f else 1f)
+    Surface(
+        onClick = onClick,
+        interactionSource = interaction,
+        shape = Pill,
+        color = container,
+        modifier = Modifier
+            .bouncyPress(interaction)
+            .graphicsLayer {
+                scaleX = pop
+                scaleY = pop
+            },
+    ) {
+        Text(
+            priority.name.lowercase().replaceFirstChar { it.uppercase() },
+            style = MaterialTheme.typography.labelLarge,
+            color = if (selected) MaterialTheme.colorScheme.surfaceContainerLowest
+            else MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
+        )
     }
 }
 
@@ -239,7 +327,7 @@ private fun dateLabelFor(scope: TaskScope): String = when (scope) {
     else -> "Date"
 }
 
-private fun datePresets(today: LocalDate, scope: TaskScope): List<Pair<String, LocalDate>> = when (scope) {
+internal fun datePresets(today: LocalDate, scope: TaskScope): List<Pair<String, LocalDate>> = when (scope) {
     TaskScope.WEEK -> listOf(
         "This week" to today,
         "Next week" to today.plus(1, DateTimeUnit.DAY).next(DayOfWeek.MONDAY),

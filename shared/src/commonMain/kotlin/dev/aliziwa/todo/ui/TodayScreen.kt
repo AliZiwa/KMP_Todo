@@ -1,12 +1,17 @@
 package dev.aliziwa.todo.ui
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -15,14 +20,12 @@ import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Tab
-import androidx.compose.material3.PrimaryTabRow
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,8 +50,11 @@ class TaskActions(
     val onDelete: (TaskItem) -> Unit,
 )
 
-private val tabTitles = listOf("Day", "Week", "Month", "Recurring")
-
+/**
+ * The task boards. Which board is showing is chosen by the navigation rail / bottom bar and passed
+ * in as [tab]; each board keeps its own date anchor so stepping through weeks does not reset the
+ * day you were looking at.
+ */
 @Composable
 fun TodayScreen(
     snapshot: TaskSnapshot,
@@ -56,40 +62,43 @@ fun TodayScreen(
     zone: TimeZone,
     nowMillis: Long,
     actions: TaskActions,
+    tab: BoardTab = BoardTab.DAY,
     modifier: Modifier = Modifier,
 ) {
-    var tab by remember { mutableIntStateOf(0) }
     var weekAnchor by remember(today) { mutableStateOf(today) }
     var monthAnchor by remember(today) { mutableStateOf(today) }
     var dayAnchor by remember(today) { mutableStateOf(today) }
 
     Column(modifier.fillMaxSize()) {
-        PrimaryTabRow(selectedTabIndex = tab) {
-            tabTitles.forEachIndexed { index, title ->
-                Tab(selected = tab == index, onClick = { tab = index }, text = { Text(title) })
-            }
-        }
         when (tab) {
-            0 -> DayTab(snapshot, dayAnchor, today, zone, nowMillis, actions) { dayAnchor = it }
-            1 -> RangeTab(
+            BoardTab.DAY -> DayTab(snapshot, dayAnchor, today, zone, nowMillis, actions) { dayAnchor = it }
+            BoardTab.WEEK -> RangeTab(
                 label = rangeLabel(DateMath.weekRange(weekAnchor)),
                 items = Boards.week(snapshot, weekAnchor).items,
                 nowMillis = nowMillis,
+                zone = zone,
                 actions = actions,
                 onPrev = { weekAnchor = weekAnchor.plus(-7, DateTimeUnit.DAY) },
                 onNext = { weekAnchor = weekAnchor.plus(7, DateTimeUnit.DAY) },
+                onToday = { weekAnchor = today },
+                isNow = DateMath.weekKey(weekAnchor) == DateMath.weekKey(today),
                 emptyTitle = "Nothing this week",
+                emptySubtitle = "A clear week. Add something, or leave it clear.",
             )
-            2 -> RangeTab(
+            BoardTab.MONTH -> RangeTab(
                 label = rangeLabel(DateMath.monthRange(monthAnchor)),
                 items = Boards.month(snapshot, monthAnchor).items,
                 nowMillis = nowMillis,
+                zone = zone,
                 actions = actions,
                 onPrev = { monthAnchor = monthAnchor.plus(-1, DateTimeUnit.MONTH) },
                 onNext = { monthAnchor = monthAnchor.plus(1, DateTimeUnit.MONTH) },
+                onToday = { monthAnchor = today },
+                isNow = DateMath.monthKey(monthAnchor) == DateMath.monthKey(today),
                 emptyTitle = "Nothing this month",
+                emptySubtitle = "Big-picture stuff goes here — the gym membership, the dentist.",
             )
-            else -> RecurringTab(snapshot, today, zone, nowMillis, actions)
+            BoardTab.RECURRING -> RecurringTab(snapshot, today, zone, nowMillis, actions)
         }
     }
 }
@@ -104,32 +113,48 @@ private fun DayTab(
     actions: TaskActions,
     onAnchorChange: (LocalDate) -> Unit,
 ) {
+    val palette = LocalTodoPalette.current
     val board = Boards.day(snapshot, anchor, zone)
     val showOverdue = anchor == today && board.overdue.isNotEmpty()
 
     Column(Modifier.fillMaxSize()) {
         RangeHeader(
             label = if (anchor == today) "Today · ${DateMath.shortLabel(anchor)}" else DateMath.shortLabel(anchor),
+            isNow = anchor == today,
             onPrev = { onAnchorChange(anchor.plus(-1, DateTimeUnit.DAY)) },
             onNext = { onAnchorChange(anchor.plus(1, DateTimeUnit.DAY)) },
+            onToday = { onAnchorChange(today) },
         )
         if (board.items.isEmpty() && !showOverdue) {
-            EmptyState("Nothing scheduled", "Tap + to add a task, or ask the assistant.")
+            EmptyState(
+                title = "Nothing due",
+                subtitle = "Go enjoy your day ☕",
+                art = EmptyArt.COFFEE,
+            )
             return@Column
         }
         LazyColumn(
-            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(6.dp),
+            contentPadding = PaddingValues(horizontal = 4.dp, vertical = 4.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.fillMaxSize(),
         ) {
             if (showOverdue) {
-                item("overdue-header") { SectionHeader("Overdue (${board.overdue.size})") }
-                items(board.overdue, key = { it.key }) { item -> Row(item, nowMillis, actions) }
+                item("overdue-header") {
+                    SectionHeader("Spilled over (${board.overdue.size})", accent = palette.high)
+                }
+                items(board.overdue, key = { it.key }) { item ->
+                    Row(item, nowMillis, zone, actions, Modifier.animateItem(placementSpec = Motion.bouncyOffset))
+                }
             }
             if (board.items.isNotEmpty()) {
-                item("today-header") { SectionHeader(if (showOverdue) "Today" else "Tasks") }
-                items(board.items, key = { it.key }) { item -> Row(item, nowMillis, actions) }
+                item("today-header") {
+                    SectionHeader(if (showOverdue) "Today" else "On the plan")
+                }
+                items(board.items, key = { it.key }) { item ->
+                    Row(item, nowMillis, zone, actions, Modifier.animateItem(placementSpec = Motion.bouncyOffset))
+                }
             }
+            item("tail") { Spacer(Modifier.size(96.dp)) }
         }
     }
 }
@@ -139,22 +164,29 @@ private fun RangeTab(
     label: String,
     items: List<TaskItem>,
     nowMillis: Long,
+    zone: TimeZone,
     actions: TaskActions,
     onPrev: () -> Unit,
     onNext: () -> Unit,
+    onToday: () -> Unit,
+    isNow: Boolean,
     emptyTitle: String,
+    emptySubtitle: String,
 ) {
     Column(Modifier.fillMaxSize()) {
-        RangeHeader(label, onPrev, onNext)
+        RangeHeader(label, isNow, onPrev, onNext, onToday)
         if (items.isEmpty()) {
-            EmptyState(emptyTitle, "Add a task and choose this range.")
+            EmptyState(emptyTitle, emptySubtitle, art = EmptyArt.CALENDAR)
             return@Column
         }
         LazyColumn(
-            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(6.dp),
+            contentPadding = PaddingValues(horizontal = 4.dp, vertical = 4.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            items(items, key = { it.key }) { item -> Row(item, nowMillis, actions) }
+            items(items, key = { it.key }) { item ->
+                Row(item, nowMillis, zone, actions, Modifier.animateItem(placementSpec = Motion.bouncyOffset))
+            }
+            item("tail") { Spacer(Modifier.size(96.dp)) }
         }
     }
 }
@@ -171,28 +203,45 @@ private fun RecurringTab(
     Column(Modifier.fillMaxSize()) {
         Text(
             "Daily routines — ticking one off only affects ${DateMath.shortLabel(today)}.",
-            style = MaterialTheme.typography.bodySmall,
+            style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth().padding(12.dp),
+            modifier = Modifier.fillMaxWidth().padding(14.dp),
         )
         if (items.isEmpty()) {
-            EmptyState("No daily routines", "Add a task and pick \"Every day\".")
+            EmptyState(
+                "No routines yet",
+                "Add a task and pick \"Every day\" — water the plants, stretch, call home.",
+                art = EmptyArt.SPROUT,
+            )
             return@Column
         }
+        val done = items.count { it.status == TaskStatus.DONE }
         LazyColumn(
-            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
-            verticalArrangement = Arrangement.spacedBy(6.dp),
+            contentPadding = PaddingValues(horizontal = 4.dp, vertical = 4.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            val done = items.count { it.status == TaskStatus.DONE }
-            item("progress") { SectionHeader("$done of ${items.size} done today") }
-            items(items, key = { it.key }) { item -> Row(item, nowMillis, actions) }
+            item("progress") {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    SectionHeader("$done of ${items.size} done today")
+                }
+            }
+            items(items, key = { it.key }) { item ->
+                Row(item, nowMillis, zone, actions, Modifier.animateItem(placementSpec = Motion.bouncyOffset))
+            }
+            item("tail") { Spacer(Modifier.size(96.dp)) }
         }
     }
 }
 
 @Composable
-private fun Row(item: TaskItem, nowMillis: Long, actions: TaskActions) {
+private fun Row(
+    item: TaskItem,
+    nowMillis: Long,
+    zone: TimeZone,
+    actions: TaskActions,
+    modifier: Modifier = Modifier,
+) {
     TaskRow(
         item = item,
         nowMillis = nowMillis,
@@ -201,23 +250,60 @@ private fun Row(item: TaskItem, nowMillis: Long, actions: TaskActions) {
         onExtend = { minutes -> actions.onExtend(item, minutes) },
         onDismiss = { actions.onDismiss(item) },
         onDelete = { actions.onDelete(item) },
+        modifier = modifier,
+        zone = zone,
     )
 }
 
 @Composable
-private fun RangeHeader(label: String, onPrev: () -> Unit, onNext: () -> Unit) {
+private fun RangeHeader(
+    label: String,
+    isNow: Boolean,
+    onPrev: () -> Unit,
+    onNext: () -> Unit,
+    onToday: () -> Unit,
+) {
     Row(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp, vertical = 2.dp),
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 2.dp, vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        IconButton(onClick = onPrev) { Icon(Icons.Default.ChevronLeft, contentDescription = "Previous") }
-        Text(
-            label,
-            style = MaterialTheme.typography.titleSmall,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.weight(1f),
-        )
-        IconButton(onClick = onNext) { Icon(Icons.Default.ChevronRight, contentDescription = "Next") }
+        StepButton(Icons.Default.ChevronLeft, "Previous", onPrev)
+        Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
+            Text(
+                label,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface,
+                textAlign = TextAlign.Center,
+            )
+        }
+        if (!isNow) {
+            SelectableChip(text = "Today", selected = false, onClick = onToday)
+            Spacer(Modifier.width(6.dp))
+        }
+        StepButton(Icons.Default.ChevronRight, "Next", onNext)
+    }
+}
+
+@Composable
+private fun StepButton(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    label: String,
+    onClick: () -> Unit,
+) {
+    val interaction = remember { MutableInteractionSource() }
+    Surface(
+        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+        shape = Pill,
+        modifier = Modifier.size(36.dp).bouncyPress(interaction, squish = 0.86f),
+    ) {
+        IconButton(onClick = onClick, interactionSource = interaction) {
+            Icon(
+                icon,
+                contentDescription = label,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(20.dp),
+            )
+        }
     }
 }
 

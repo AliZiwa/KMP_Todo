@@ -41,6 +41,10 @@ kotlin {
 tasks.withType<Test>().configureEach {
     systemProperty("java.awt.headless", "true")
     testLogging { showStandardStreams = true }
+    // ScreenshotTest renders App() into PNGs; -Ptodo.screenshotDir=<dir> says where they land.
+    (project.findProperty("todo.screenshotDir") as String?)?.let {
+        systemProperty("todo.screenshotDir", it)
+    }
 }
 
 compose.desktop {
