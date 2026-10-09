@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Personal Todo</string>
+    <string name="channel_sticky_name">Today overview</string>
+    <string name="channel_sticky_desc">Ongoing notification with your next task and countdown.</string>
+    <string name="channel_alerts_name">Task due alerts</string>
+    <string name="channel_alerts_desc">Full-screen doorbell alert when a task becomes due.</string>
+    <string name="channel_alerts_silent_name">Task due alerts (silent)</string>
+    <string name="channel_alerts_silent_desc">Same alerts, with the doorbell played by the app instead of the notification.</string>
+    <string name="channel_prompt_name">Daily plan prompt</string>
+    <string name="channel_prompt_desc">Morning reminder to plan your day.</string>
+</resources>

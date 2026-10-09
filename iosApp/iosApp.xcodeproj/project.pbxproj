@@ -1,0 +1,608 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		07A253A71977FD61FB68876B /* TodoStatusWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A90F74619AB9C130AAAF4C5 /* TodoStatusWidget.swift */; };
+		113E3F3E479A8A698340EA7A /* IosCapabilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC686F3BD5F88C005DFA8A18 /* IosCapabilities.swift */; };
+		18199E8E50724EB1CB0BF458 /* TodoWidgetsBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9B75BA0B8DA6F7E56999AB1 /* TodoWidgetsBundle.swift */; };
+		1AACCD2A83CF362FE674E8D5 /* llama.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0614E39F1CA9217DE27FEF9E /* llama.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		1C51B7040E987D5DD6C61504 /* doorbell.caf in Resources */ = {isa = PBXBuildFile; fileRef = 0AC4AD6202609FF92E7DC640 /* doorbell.caf */; };
+		26AD5923842755518205570D /* llama.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0614E39F1CA9217DE27FEF9E /* llama.xcframework */; };
+		2AE3192184F35984A6B5AE11 /* AppGroupState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A11028BA053AF030686EE2 /* AppGroupState.swift */; };
+		307C2654CD5972A25FB7FD87 /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 668CECA83ACC03A83C85A623 /* iOSApp.swift */; };
+		41A86210B8278E977F35B7A2 /* IosAlertPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD9274E2898F247742EF0543 /* IosAlertPresenter.swift */; };
+		475338DEFA7A2191C1C9F582 /* AppRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B48AA17C772F84F491FBD1A9 /* AppRouter.swift */; };
+		51870D993F23BD30FAE28623 /* LlamaCppEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E29F39A56A35B520DF5E799 /* LlamaCppEngine.swift */; };
+		56B0305B5D3847FC6B326502 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE8509E5A49E4A5CAAEB3ADB /* ContentView.swift */; };
+		652108EEAC319198ECAE0B05 /* AppGroupState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A11028BA053AF030686EE2 /* AppGroupState.swift */; };
+		815DFCAA99C7A82816B7798C /* Bootstrap.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDFB57A3ECF627AE4297D4E4 /* Bootstrap.swift */; };
+		823C498BF5D1F4E85106451C /* IosAlarmScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6621515C0489F810D73AD135 /* IosAlarmScheduler.swift */; };
+		897415E23EA3C655F77F7250 /* TodoActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E41E6BDDE93B7F06657A946 /* TodoActivityAttributes.swift */; };
+		BBD1BAF3BFA4762BBBE617AA /* IosSoundPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE9348104DD3F7CDB8CDD3E /* IosSoundPlayer.swift */; };
+		BC240A2AD6607F006E13C24F /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77B18463F7D97492BE4664F /* Notifications.swift */; };
+		CFA9E90A08B5FE142C579542 /* TodoActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E41E6BDDE93B7F06657A946 /* TodoActivityAttributes.swift */; };
+		EF698BB1AB0245CB80762963 /* TodoWidgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 81ED080458C4CAAAA226C38C /* TodoWidgets.appex */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EF7478FD980D56D01F4272A0 /* TodoLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7D91169C22C8A76E0CF0EE5 /* TodoLiveActivity.swift */; };
+		FDE52B8D57A097A60A4CF366 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B6C1F485E0CF8BB70C9DDD2 /* AppDelegate.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		CC866661AE80BBE9B8100898 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 242FB5348943441C388468CE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E1AC767BEC663CD780361CAF;
+			remoteInfo = TodoWidgets;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		DB76241340C08196BD9C492C /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				1AACCD2A83CF362FE674E8D5 /* llama.xcframework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E99160E501832DB2CECE6CFF /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				EF698BB1AB0245CB80762963 /* TodoWidgets.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		0614E39F1CA9217DE27FEF9E /* llama.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = llama.xcframework; path = Vendor/llama.xcframework; sourceTree = "<group>"; };
+		0A90F74619AB9C130AAAF4C5 /* TodoStatusWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoStatusWidget.swift; sourceTree = "<group>"; };
+		0AC4AD6202609FF92E7DC640 /* doorbell.caf */ = {isa = PBXFileReference; path = doorbell.caf; sourceTree = "<group>"; };
+		33A11028BA053AF030686EE2 /* AppGroupState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppGroupState.swift; sourceTree = "<group>"; };
+		4FE9348104DD3F7CDB8CDD3E /* IosSoundPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IosSoundPlayer.swift; sourceTree = "<group>"; };
+		6621515C0489F810D73AD135 /* IosAlarmScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IosAlarmScheduler.swift; sourceTree = "<group>"; };
+		668CECA83ACC03A83C85A623 /* iOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSApp.swift; sourceTree = "<group>"; };
+		81ED080458C4CAAAA226C38C /* TodoWidgets.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = TodoWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		86038AE1032E284E79B32AD6 /* iosApp.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = iosApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8B6C1F485E0CF8BB70C9DDD2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		8E29F39A56A35B520DF5E799 /* LlamaCppEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LlamaCppEngine.swift; sourceTree = "<group>"; };
+		9E41E6BDDE93B7F06657A946 /* TodoActivityAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoActivityAttributes.swift; sourceTree = "<group>"; };
+		A7D91169C22C8A76E0CF0EE5 /* TodoLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoLiveActivity.swift; sourceTree = "<group>"; };
+		B48AA17C772F84F491FBD1A9 /* AppRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRouter.swift; sourceTree = "<group>"; };
+		B9B75BA0B8DA6F7E56999AB1 /* TodoWidgetsBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoWidgetsBundle.swift; sourceTree = "<group>"; };
+		BD9274E2898F247742EF0543 /* IosAlertPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IosAlertPresenter.swift; sourceTree = "<group>"; };
+		CE8509E5A49E4A5CAAEB3ADB /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		E77B18463F7D97492BE4664F /* Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
+		EDFB57A3ECF627AE4297D4E4 /* Bootstrap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bootstrap.swift; sourceTree = "<group>"; };
+		FC686F3BD5F88C005DFA8A18 /* IosCapabilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IosCapabilities.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		EF8A6E9BFD470986D9D5C9B5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				26AD5923842755518205570D /* llama.xcframework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		1DB4B685CAEE8BEFEBBAEF94 /* iosApp */ = {
+			isa = PBXGroup;
+			children = (
+				F7C7F6B34F1E1AA6A8639599 /* Ports */,
+				1EEC3D4E9285A39087C3ADA0 /* Resources */,
+				8B6C1F485E0CF8BB70C9DDD2 /* AppDelegate.swift */,
+				B48AA17C772F84F491FBD1A9 /* AppRouter.swift */,
+				EDFB57A3ECF627AE4297D4E4 /* Bootstrap.swift */,
+				CE8509E5A49E4A5CAAEB3ADB /* ContentView.swift */,
+				668CECA83ACC03A83C85A623 /* iOSApp.swift */,
+				E77B18463F7D97492BE4664F /* Notifications.swift */,
+			);
+			path = iosApp;
+			sourceTree = "<group>";
+		};
+		1EEC3D4E9285A39087C3ADA0 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				0AC4AD6202609FF92E7DC640 /* doorbell.caf */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		269B526A4A4FCA2ABE65BA1A /* SharedSwift */ = {
+			isa = PBXGroup;
+			children = (
+				33A11028BA053AF030686EE2 /* AppGroupState.swift */,
+				9E41E6BDDE93B7F06657A946 /* TodoActivityAttributes.swift */,
+			);
+			path = SharedSwift;
+			sourceTree = "<group>";
+		};
+		3666012298E772D226418813 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				0614E39F1CA9217DE27FEF9E /* llama.xcframework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		38B69C3F79CD97858CF7B609 = {
+			isa = PBXGroup;
+			children = (
+				1DB4B685CAEE8BEFEBBAEF94 /* iosApp */,
+				269B526A4A4FCA2ABE65BA1A /* SharedSwift */,
+				3A42FC90F20956B2C89968F5 /* TodoWidgets */,
+				3666012298E772D226418813 /* Frameworks */,
+				94C98B8B3A2BFC1966447269 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		3A42FC90F20956B2C89968F5 /* TodoWidgets */ = {
+			isa = PBXGroup;
+			children = (
+				A7D91169C22C8A76E0CF0EE5 /* TodoLiveActivity.swift */,
+				0A90F74619AB9C130AAAF4C5 /* TodoStatusWidget.swift */,
+				B9B75BA0B8DA6F7E56999AB1 /* TodoWidgetsBundle.swift */,
+			);
+			path = TodoWidgets;
+			sourceTree = "<group>";
+		};
+		94C98B8B3A2BFC1966447269 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				86038AE1032E284E79B32AD6 /* iosApp.app */,
+				81ED080458C4CAAAA226C38C /* TodoWidgets.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F7C7F6B34F1E1AA6A8639599 /* Ports */ = {
+			isa = PBXGroup;
+			children = (
+				6621515C0489F810D73AD135 /* IosAlarmScheduler.swift */,
+				BD9274E2898F247742EF0543 /* IosAlertPresenter.swift */,
+				FC686F3BD5F88C005DFA8A18 /* IosCapabilities.swift */,
+				4FE9348104DD3F7CDB8CDD3E /* IosSoundPlayer.swift */,
+				8E29F39A56A35B520DF5E799 /* LlamaCppEngine.swift */,
+			);
+			path = Ports;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		78B53CC79860CBFC2F5543C6 /* iosApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 29DCA9F0B3A40325067EB163 /* Build configuration list for PBXNativeTarget "iosApp" */;
+			buildPhases = (
+				C263BE7E68B1B2B41CE2771C /* Build Kotlin framework */,
+				297B59D9CE634556D6007C40 /* Sources */,
+				1623B02D10928C8101C1F806 /* Resources */,
+				EF8A6E9BFD470986D9D5C9B5 /* Frameworks */,
+				E99160E501832DB2CECE6CFF /* Embed Foundation Extensions */,
+				DB76241340C08196BD9C492C /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B04D7DB6A90C1AB8B3FC671C /* PBXTargetDependency */,
+			);
+			name = iosApp;
+			packageProductDependencies = (
+			);
+			productName = iosApp;
+			productReference = 86038AE1032E284E79B32AD6 /* iosApp.app */;
+			productType = "com.apple.product-type.application";
+		};
+		E1AC767BEC663CD780361CAF /* TodoWidgets */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 20D3322EAC75A0603D7D9D86 /* Build configuration list for PBXNativeTarget "TodoWidgets" */;
+			buildPhases = (
+				0973DDA0576ED67D6407F997 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TodoWidgets;
+			packageProductDependencies = (
+			);
+			productName = TodoWidgets;
+			productReference = 81ED080458C4CAAAA226C38C /* TodoWidgets.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		242FB5348943441C388468CE /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 2600;
+				TargetAttributes = {
+					78B53CC79860CBFC2F5543C6 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+					E1AC767BEC663CD780361CAF = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = FF7CA1CA754D017066F1822F /* Build configuration list for PBXProject "iosApp" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 38B69C3F79CD97858CF7B609;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 94C98B8B3A2BFC1966447269 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				78B53CC79860CBFC2F5543C6 /* iosApp */,
+				E1AC767BEC663CD780361CAF /* TodoWidgets */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		1623B02D10928C8101C1F806 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1C51B7040E987D5DD6C61504 /* doorbell.caf in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		C263BE7E68B1B2B41CE2771C /* Build Kotlin framework */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Build Kotlin framework";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cd \"$SRCROOT/..\"\n# DEVELOPER_DIR is already set by Xcode.\n# SKIP_KOTLIN_BUILD=1 reuses the last framework (handy while iterating on Swift).\nif [ \"$SKIP_KOTLIN_BUILD\" = \"1\" ]; then\n  echo \"note: SKIP_KOTLIN_BUILD=1, reusing existing Shared.framework\"\n  exit 0\nfi\n./gradlew :shared:embedAndSignAppleFrameworkForXcode --console=plain\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		0973DDA0576ED67D6407F997 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				652108EEAC319198ECAE0B05 /* AppGroupState.swift in Sources */,
+				897415E23EA3C655F77F7250 /* TodoActivityAttributes.swift in Sources */,
+				EF7478FD980D56D01F4272A0 /* TodoLiveActivity.swift in Sources */,
+				07A253A71977FD61FB68876B /* TodoStatusWidget.swift in Sources */,
+				18199E8E50724EB1CB0BF458 /* TodoWidgetsBundle.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		297B59D9CE634556D6007C40 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FDE52B8D57A097A60A4CF366 /* AppDelegate.swift in Sources */,
+				2AE3192184F35984A6B5AE11 /* AppGroupState.swift in Sources */,
+				475338DEFA7A2191C1C9F582 /* AppRouter.swift in Sources */,
+				815DFCAA99C7A82816B7798C /* Bootstrap.swift in Sources */,
+				56B0305B5D3847FC6B326502 /* ContentView.swift in Sources */,
+				823C498BF5D1F4E85106451C /* IosAlarmScheduler.swift in Sources */,
+				41A86210B8278E977F35B7A2 /* IosAlertPresenter.swift in Sources */,
+				113E3F3E479A8A698340EA7A /* IosCapabilities.swift in Sources */,
+				BBD1BAF3BFA4762BBBE617AA /* IosSoundPlayer.swift in Sources */,
+				51870D993F23BD30FAE28623 /* LlamaCppEngine.swift in Sources */,
+				BC240A2AD6607F006E13C24F /* Notifications.swift in Sources */,
+				CFA9E90A08B5FE142C579542 /* TodoActivityAttributes.swift in Sources */,
+				307C2654CD5972A25FB7FD87 /* iOSApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		B04D7DB6A90C1AB8B3FC671C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E1AC767BEC663CD780361CAF /* TodoWidgets */;
+			targetProxy = CC866661AE80BBE9B8100898 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		11814011E7D6EC822BFBC66D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = LLAMA_ENABLED;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		432EB5476924FCA8CE3ED7AD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = TodoWidgets/TodoWidgets.entitlements;
+				CURRENT_PROJECT_VERSION = 1;
+				INFOPLIST_FILE = TodoWidgets/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.aliziwa.todo.TodoWidgets;
+				PRODUCT_NAME = TodoWidgets;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		6C824A6EB4BAD43AE2A4BB29 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG LLAMA_ENABLED";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		9221A1FDC06803E8A2FC6E61 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = iosApp/iosApp.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)",
+					"\"Vendor\"",
+				);
+				INFOPLIST_FILE = iosApp/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					Shared,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = dev.aliziwa.todo;
+				PRODUCT_NAME = PersonalTodo;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		AF835BFF1220CA5AB5B867E4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = iosApp/iosApp.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)",
+					"\"Vendor\"",
+				);
+				INFOPLIST_FILE = iosApp/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-framework",
+					Shared,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = dev.aliziwa.todo;
+				PRODUCT_NAME = PersonalTodo;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		D050575C00345E4A57B74DF5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = TodoWidgets/TodoWidgets.entitlements;
+				CURRENT_PROJECT_VERSION = 1;
+				INFOPLIST_FILE = TodoWidgets/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.aliziwa.todo.TodoWidgets;
+				PRODUCT_NAME = TodoWidgets;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		20D3322EAC75A0603D7D9D86 /* Build configuration list for PBXNativeTarget "TodoWidgets" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				432EB5476924FCA8CE3ED7AD /* Debug */,
+				D050575C00345E4A57B74DF5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		29DCA9F0B3A40325067EB163 /* Build configuration list for PBXNativeTarget "iosApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9221A1FDC06803E8A2FC6E61 /* Debug */,
+				AF835BFF1220CA5AB5B867E4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		FF7CA1CA754D017066F1822F /* Build configuration list for PBXProject "iosApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6C824A6EB4BAD43AE2A4BB29 /* Debug */,
+				11814011E7D6EC822BFBC66D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 242FB5348943441C388468CE /* Project object */;
+}

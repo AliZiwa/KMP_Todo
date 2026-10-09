@@ -1,16 +1,122 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Only used for user-initiated model downloads and user-configured LAN LLM endpoints. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!-- Notifications: runtime-requested on API 33+. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!-- Ongoing sticky summary. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+
+    <!-- Full-screen due alert over the lock screen. -->
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.TURN_SCREEN_ON" />
+
+    <!--
+      Exact alarms. The brief assumed AlarmManager.setAlarmClock needs no permission; that stopped
+      being true - on API 37 it throws
+        SecurityException: needs to hold SCHEDULE_EXACT_ALARM or USE_EXACT_ALARM
+      (verified on the Pixel_10a emulator). USE_EXACT_ALARM is the right one here: it is granted at
+      install with no user prompt, and it is exactly the category Google defines it for - an app
+      whose core function is user-set alarms/reminders. SCHEDULE_EXACT_ALARM covers API <= 32,
+      where it is auto-granted. AndroidAlarmScheduler still degrades to an inexact alarm if both
+      are somehow revoked.
+    -->
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
+    <uses-permission
+        android:name="android.permission.SCHEDULE_EXACT_ALARM"
+        android:maxSdkVersion="32" />
+
+    <!-- Re-arm alarms after reboot / app update / clock change. -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <!-- Asked once, non-blocking; alarms use setAlarmClock so this is a nice-to-have. -->
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+
     <application
         android:name=".TodoApplication"
-        android:label="Personal Todo"
+        android:label="@string/app_name"
         android:allowBackup="true"
+        android:fullBackupContent="@xml/backup_rules"
         android:supportsRtl="true"
-        android:theme="@android:style/Theme.Material.Light.NoActionBar">
-        <activity android:name=".MainActivity" android:exported="true" android:launchMode="singleTask">
+        android:icon="@drawable/ic_notification"
+        android:theme="@style/Theme.PersonalTodo">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|uiMode|density">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Full-screen due alert. Shows over the lock screen and turns the screen on. -->
+        <activity
+            android:name=".DueAlertActivity"
+            android:exported="false"
+            android:launchMode="singleTop"
+            android:excludeFromRecents="true"
+            android:taskAffinity="dev.aliziwa.todo.alert"
+            android:showOnLockScreen="true"
+            android:turnScreenOn="true"
+            android:showWhenLocked="true"
+            android:theme="@style/Theme.PersonalTodo.Alert"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|uiMode|density" />
+
+        <!--
+          specialUse: a user-visible countdown to the next due task; it must survive the 6h/day
+          dataSync quota on API 34+. On API 29..33 the service starts as dataSync instead
+          (see StickyForegroundService.foregroundServiceType()).
+        -->
+        <service
+            android:name=".StickyForegroundService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse|dataSync">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Ongoing countdown to the user's next due task plus the alarm doorbell; the user explicitly opts into this persistent reminder surface." />
+        </service>
+
+        <!-- AlarmManager.setAlarmClock target for per-task due alarms. -->
+        <receiver
+            android:name=".AlarmReceiver"
+            android:exported="false"
+            android:directBootAware="false" />
+
+        <!-- Daily "plan your day" alarm. -->
+        <receiver
+            android:name=".DailyPromptReceiver"
+            android:exported="false" />
+
+        <!-- Notification / full-screen-alert action buttons; works with the UI dead. -->
+        <receiver
+            android:name=".TaskActionReceiver"
+            android:exported="false" />
+
+        <!-- Re-sync alarms after reboot, app replace, and clock/timezone changes. -->
+        <receiver
+            android:name=".BootReceiver"
+            android:exported="false"
+            android:directBootAware="false"
+            tools:ignore="UnusedAttribute">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+            </intent-filter>
+        </receiver>
     </application>
 </manifest>

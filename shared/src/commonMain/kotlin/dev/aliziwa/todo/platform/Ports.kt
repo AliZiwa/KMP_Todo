@@ -40,6 +40,17 @@ data class StickySummary(
  */
 interface AlarmScheduler {
     fun schedule(taskId: String, atEpochMillis: Long)
+
+    /**
+     * Same as [schedule] but carries the task title, for platforms that must compose the
+     * notification body at schedule time (iOS `UNUserNotificationCenter`).
+     * For a recurring instance the title is the template's title.
+     *
+     * ADDITIVE (shared agent, wave 1): defaults to the 2-arg overload, so implementations that only
+     * override [schedule] keep working. The shared layer always calls THIS overload.
+     */
+    fun schedule(taskId: String, atEpochMillis: Long, title: String) = schedule(taskId, atEpochMillis)
+
     fun cancel(taskId: String)
     fun cancelAll()
     /** Daily "plan your day" prompt. [hourOfDay]/[minute] in local time. */
@@ -132,6 +143,14 @@ interface PlatformCapabilities {
     fun bringToFront() {}
     /** Open a URL in the system browser (used for Hugging Face links). */
     fun openUrl(url: String) {}
+
+    /**
+     * Free space in bytes on the volume holding [directory], or null when the platform cannot tell.
+     * Used by the model downloader to refuse a download that cannot fit.
+     * ADDITIVE (shared agent, wave 1) — default implementation means platforms need not implement it.
+     */
+    suspend fun freeSpaceBytes(directory: String): Long? = null
+
     val platformName: String
 }
 

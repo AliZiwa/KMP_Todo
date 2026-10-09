@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  DEBUG ONLY. Exports the alarm/boot receivers so `adb shell am broadcast` can drive them.
+  The release manifest keeps every receiver android:exported="false".
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <application>
+        <receiver android:name=".AlarmReceiver" android:exported="true" tools:replace="android:exported" />
+        <receiver android:name=".DailyPromptReceiver" android:exported="true" tools:replace="android:exported" />
+        <receiver android:name=".TaskActionReceiver" android:exported="true" tools:replace="android:exported" />
+        <receiver android:name=".BootReceiver" android:exported="true" tools:replace="android:exported" />
+        <receiver android:name=".DebugReceiver" android:exported="true" />
+    </application>
+</manifest>

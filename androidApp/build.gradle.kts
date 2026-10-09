@@ -17,9 +17,17 @@ android {
         versionName = "0.1.0"
     }
     buildTypes {
+        debug {
+            // src/debug adds DebugReceiver + exported receivers so adb can drive the alarm paths.
+            isMinifyEnabled = false
+        }
         release {
             isMinifyEnabled = false
         }
+    }
+    packaging {
+        // litertlm ships only arm64-v8a/x86_64; nothing else to strip.
+        jniLibs { useLegacyPackaging = false }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -43,4 +51,6 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.okhttp)
+    // On-device LLM. AAR with arm64-v8a + x86_64 native libs; see LiteRtLlmEngine.
+    implementation(libs.litertlm.android)
 }
