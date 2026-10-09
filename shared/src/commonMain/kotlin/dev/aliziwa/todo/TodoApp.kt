@@ -1,6 +1,7 @@
 package dev.aliziwa.todo
 
 import androidx.room.RoomDatabase
+import dev.aliziwa.todo.assistant.AssistantPlanSchema
 import dev.aliziwa.todo.assistant.AssistantService
 import dev.aliziwa.todo.assistant.PlanExecutor
 import dev.aliziwa.todo.assistant.PlanResolver
@@ -50,7 +51,10 @@ class AppGraph internal constructor(
         scope = appScope,
     )
 
-    val llmRuntimeFactory: LlmRuntimeFactory = LlmRuntimeFactory(platform)
+    val llmRuntimeFactory: LlmRuntimeFactory = LlmRuntimeFactory(
+        platform = platform,
+        planJsonSchema = AssistantPlanSchema.STRICT,
+    )
 
     val modelDownloader: ModelDownloader = ModelDownloader(
         http = platform.http,

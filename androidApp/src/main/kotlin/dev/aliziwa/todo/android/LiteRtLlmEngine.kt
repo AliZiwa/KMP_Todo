@@ -10,6 +10,7 @@ import com.google.ai.edge.litertlm.ConversationConfig
 import com.google.ai.edge.litertlm.Engine
 import com.google.ai.edge.litertlm.EngineConfig
 import com.google.ai.edge.litertlm.Message
+import com.google.ai.edge.litertlm.ResponseFormat
 import com.google.ai.edge.litertlm.SamplerConfig
 import dev.aliziwa.todo.platform.EngineState
 import dev.aliziwa.todo.platform.GenerationOptions
@@ -135,72 +136,118 @@ class LiteRtLlmEngine(context: Context) : LocalLlmEngine {
                 /* temperature = */ options.temperature.toDouble(),
                 /* seed = */ 0,
             )
-            val config = if (system.isEmpty()) {
-                ConversationConfig(
-                    initialMessages = history,
-                    samplerConfig = sampler,
-                    maxOutputToken = options.maxTokens,
-                )
-            } else {
-                ConversationConfig(
-                    systemInstruction = Contents.of(system),
-                    initialMessages = history,
-                    samplerConfig = sampler,
-                    maxOutputToken = options.maxTokens,
-                )
+
+            // Schema-constrained decoding. Building the ResponseFormat can throw if LiteRT-LM
+            // dislikes the schema, so it is attempted defensively; a null format means ordinary
+            // unconstrained generation and the shared layer's tolerant JSON parser takes over.
+            val requested = options.jsonSchema?.takeIf { options.jsonMode && it.isNotBlank() }
+            var format = requested?.let { schema ->
+                runCatching { ResponseFormat.json(schema) }
+                    .onFailure { Log.w(TAG, "LiteRT rejected the JSON schema; generating unconstrained", it) }
+                    .getOrNull()
             }
 
-            val conversation = eng.createConversation(config)
-            activeConversation = conversation
-            try {
-                var emitted = ""
-                withTimeout(options.timeoutMillis) {
-                    conversation.sendMessageAsync(Contents.of(prompt)).collect { message ->
-                        val full = message.text()
-                        // LiteRT-LM's streaming Messages are cumulative in practice, but tolerate
-                        // delta-style emissions too rather than duplicating the whole answer.
-                        val chunk = when {
-                            full.length >= emitted.length && full.startsWith(emitted) -> {
-                                val c = full.substring(emitted.length)
-                                emitted = full
-                                c
-                            }
-                            else -> {
-                                emitted += full
-                                full
-                            }
-                        }
-                        if (chunk.isNotEmpty()) {
-                            val stop = options.stopSequences.firstOrNull { chunk.contains(it) }
-                            if (stop != null) {
-                                emit(chunk.substringBefore(stop))
-                                conversation.cancelProcess()
-                                return@collect
-                            }
-                            emit(chunk)
-                        }
-                    }
-                }
-            } catch (t: TimeoutCancellationException) {
-                runCatching { conversation.cancelProcess() }
-                throw IllegalStateException(
-                    "On-device generation timed out after ${options.timeoutMillis} ms",
-                    t,
+            while (true) {
+                val conversation = eng.createConversation(
+                    conversationConfig(
+                        system = system,
+                        history = history,
+                        sampler = sampler,
+                        maxTokens = options.maxTokens,
+                        responseFormat = format != null,
+                    ),
                 )
-            } catch (c: CancellationException) {
-                runCatching { conversation.cancelProcess() }
-                throw c
-            } catch (t: Throwable) {
-                runCatching { conversation.cancelProcess() }
-                val message = "On-device generation failed: ${t.message ?: t::class.java.simpleName}"
-                Log.e(TAG, message, t)
-                _state.value = EngineState.Error(message, t)
-                throw IllegalStateException(message, t)
-            } finally {
-                activeConversation = null
-                runCatching { conversation.close() }
+                activeConversation = conversation
+                var emittedAny = false
+                try {
+                    var emitted = ""
+                    withTimeout(options.timeoutMillis) {
+                        conversation.sendMessageAsync(Contents.of(prompt), responseFormat = format)
+                            .collect { message ->
+                                val full = message.text()
+                                // LiteRT-LM's streaming Messages are cumulative in practice, but
+                                // tolerate delta-style emissions rather than duplicating the answer.
+                                val chunk = when {
+                                    full.length >= emitted.length && full.startsWith(emitted) -> {
+                                        val c = full.substring(emitted.length)
+                                        emitted = full
+                                        c
+                                    }
+                                    else -> {
+                                        emitted += full
+                                        full
+                                    }
+                                }
+                                if (chunk.isNotEmpty()) {
+                                    val stop = options.stopSequences.firstOrNull { chunk.contains(it) }
+                                    if (stop != null) {
+                                        emittedAny = true
+                                        emit(chunk.substringBefore(stop))
+                                        conversation.cancelProcess()
+                                        return@collect
+                                    }
+                                    emittedAny = true
+                                    emit(chunk)
+                                }
+                            }
+                    }
+                    return@flow
+                } catch (t: TimeoutCancellationException) {
+                    runCatching { conversation.cancelProcess() }
+                    throw IllegalStateException(
+                        "On-device generation timed out after ${options.timeoutMillis} ms",
+                        t,
+                    )
+                } catch (c: CancellationException) {
+                    runCatching { conversation.cancelProcess() }
+                    throw c
+                } catch (t: Throwable) {
+                    runCatching { conversation.cancelProcess() }
+                    // A constrained run that failed before producing anything is retried once
+                    // unconstrained: a schema the runtime cannot compile must not cost the user
+                    // their answer. Once text has been emitted, retrying would duplicate it.
+                    if (format != null && !emittedAny) {
+                        Log.w(TAG, "constrained generation failed; retrying unconstrained", t)
+                        format = null
+                        continue
+                    }
+                    val message = "On-device generation failed: ${t.message ?: t::class.java.simpleName}"
+                    Log.e(TAG, message, t)
+                    _state.value = EngineState.Error(message, t)
+                    throw IllegalStateException(message, t)
+                } finally {
+                    activeConversation = null
+                    runCatching { conversation.close() }
+                }
             }
         }.flowOn(Dispatchers.IO)
+
+    /**
+     * [ConversationConfig] has no nullable `systemInstruction`, so the two shapes are built
+     * explicitly rather than passing an empty [Contents].
+     */
+    private fun conversationConfig(
+        system: String,
+        history: List<Message>,
+        sampler: SamplerConfig,
+        maxTokens: Int,
+        responseFormat: Boolean,
+    ): ConversationConfig = if (system.isEmpty()) {
+        ConversationConfig(
+            initialMessages = history,
+            samplerConfig = sampler,
+            maxOutputToken = maxTokens,
+            enableResponseFormat = responseFormat,
+        )
+    } else {
+        ConversationConfig(
+            systemInstruction = Contents.of(system),
+            initialMessages = history,
+            samplerConfig = sampler,
+            maxOutputToken = maxTokens,
+            enableResponseFormat = responseFormat,
+        )
+    }
 
     override fun cancelGeneration() {
         runCatching { activeConversation?.cancelProcess() }

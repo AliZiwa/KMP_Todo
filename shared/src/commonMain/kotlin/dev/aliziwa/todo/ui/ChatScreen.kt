@@ -36,6 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import dev.aliziwa.todo.assistant.AssistantMode
 import dev.aliziwa.todo.assistant.ChatMessage
@@ -60,6 +61,8 @@ fun ChatScreen(
     onReject: (String) -> Unit,
     onOpenSettings: () -> Unit,
     onReenable: () -> Unit,
+    /** Name of the recommended on-device model, shown in the empty state when none is set up. */
+    suggestedModelName: String? = null,
     modifier: Modifier = Modifier,
 ) {
     var input by remember { mutableStateOf("") }
@@ -80,6 +83,19 @@ fun ChatScreen(
                         "\"gym tomorrow at 7\" · \"call mum every day at 18:00\" · \"done with laundry\"",
                     )
                     if (mode != AssistantMode.READY) {
+                        Text(
+                            if (suggestedModelName != null) {
+                                "Works offline without a model. For full natural language, " +
+                                    "download $suggestedModelName in Settings."
+                            } else {
+                                "Works offline without a model. Connect a local server in Settings " +
+                                    "for full natural language."
+                            },
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(horizontal = 32.dp, vertical = 4.dp),
+                        )
                         OutlinedButton(onClick = onOpenSettings) { Text("Set up a model") }
                     }
                 }

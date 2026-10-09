@@ -33,6 +33,11 @@ val LocalEngineProvider: LLMProvider = LLMProvider("local-engine", "On-device en
 class LocalEngineLLMClient(
     private val engine: LocalLlmEngine,
     private val defaults: GenerationOptions = GenerationOptions(),
+    /**
+     * JSON Schema handed to engines with schema-constrained decoding, for plan prompts only.
+     * Supplied by [LlmRuntimeFactory] (ultimately `AssistantPlanSchema.STRICT`); null disables it.
+     */
+    private val planJsonSchema: String? = null,
 ) : LLMClient() {
 
     private val tag = "LocalEngineLLMClient"
@@ -95,11 +100,16 @@ class LocalEngineLLMClient(
      * prompts (the Settings connection probe, small talk) use one that does not. Forcing JSON on a
      * plain-text prompt makes grammar-constrained engines answer `{}`.
      */
-    private fun Prompt.toOptions(model: LLModel): GenerationOptions = defaults.copy(
-        temperature = params.temperature?.toFloat() ?: defaults.temperature,
-        maxTokens = params.maxTokens ?: defaults.maxTokens,
-        jsonMode = model.supports(LLMCapability.Schema.JSON.Basic),
-    )
+    private fun Prompt.toOptions(model: LLModel): GenerationOptions {
+        val jsonMode = model.supports(LLMCapability.Schema.JSON.Basic)
+        return defaults.copy(
+            temperature = params.temperature?.toFloat() ?: defaults.temperature,
+            maxTokens = params.maxTokens ?: defaults.maxTokens,
+            jsonMode = jsonMode,
+            // Only a plan prompt gets a schema; a plain-text prompt must stay unconstrained.
+            jsonSchema = if (jsonMode) planJsonSchema ?: defaults.jsonSchema else null,
+        )
+    }
 
     companion object {
         /**

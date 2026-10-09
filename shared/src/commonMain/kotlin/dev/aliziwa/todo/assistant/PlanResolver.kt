@@ -67,11 +67,16 @@ class PlanResolver(private val zoneProvider: () -> TimeZone) {
 
     private val zone: TimeZone get() = zoneProvider()
 
+    /** Date/time reading is shared with [RuleBasedParser] — one source of truth. */
+    private val whenExtractor = WhenExtractor(zoneProvider)
+
     fun resolve(
         plan: AssistantPlan,
         snapshot: TaskSnapshot,
         nowMillis: Long,
         source: PlanSource,
+        /** The user's own words, used to overrule an LLM that ignored an explicit date/time. */
+        userText: String? = null,
     ): ResolvedPlan {
         val today = DateMath.today(nowMillis, zone)
         val universe = candidateItems(snapshot, today)
@@ -79,9 +84,18 @@ class PlanResolver(private val zoneProvider: () -> TimeZone) {
         val warnings = mutableListOf<String>()
         var clarification: String? = null
 
+        // Only trust the keyword over the model when there is exactly ONE task being created or
+        // changed — with several, a single "today" cannot be attributed to a particular one.
+        val scheduling = plan.ops.count { it.op.lowercase().trim() in SCHEDULING_OPS }
+        val hint = if (source == PlanSource.LLM && !userText.isNullOrBlank() && scheduling == 1) {
+            whenExtractor.extract(userText, nowMillis)
+        } else {
+            null
+        }
+
         plan.ops.forEach { op ->
             when (op.op.lowercase().trim()) {
-                AssistantOps.ADD -> resolveAdd(op, today, nowMillis)?.let { actions += it }
+                AssistantOps.ADD -> resolveAdd(op, today, nowMillis, hint, warnings)?.let { actions += it }
                     ?: warnings.add("Skipped an add with no title.")
 
                 AssistantOps.UPDATE -> {
@@ -89,7 +103,7 @@ class PlanResolver(private val zoneProvider: () -> TimeZone) {
                     if (target == null) {
                         warnings += "Could not find a task matching \"${op.title ?: op.taskId ?: "?"}\" to change."
                     } else {
-                        val draft = draftFor(op, today, nowMillis, base = target)
+                        val draft = draftFor(op, today, nowMillis, base = target, hint = hint, warnings = warnings)
                         actions += PlannedAction.Update(
                             taskId = target.taskId,
                             draft = draft,
@@ -162,17 +176,44 @@ class PlanResolver(private val zoneProvider: () -> TimeZone) {
         return (day.overdue + day.items + week + month + tomorrow).distinctBy { it.key }
     }
 
-    private fun resolveAdd(op: AssistantOp, today: LocalDate, nowMillis: Long): PlannedAction.Add? {
+    private fun resolveAdd(
+        op: AssistantOp,
+        today: LocalDate,
+        nowMillis: Long,
+        hint: WhenMatch?,
+        warnings: MutableList<String>,
+    ): PlannedAction.Add? {
         val title = op.title?.trim()?.takeIf { it.isNotEmpty() } ?: return null
-        val draft = draftFor(op, today, nowMillis, base = null).copy(title = title)
+        val draft = draftFor(op, today, nowMillis, base = null, hint = hint, warnings = warnings)
+            .copy(title = title)
         return PlannedAction.Add(draft, "Add \"$title\"" + draftDetail(draft))
     }
 
-    private fun draftFor(op: AssistantOp, today: LocalDate, nowMillis: Long, base: TaskItem?): TaskDraft {
+    private fun draftFor(
+        op: AssistantOp,
+        today: LocalDate,
+        nowMillis: Long,
+        base: TaskItem?,
+        hint: WhenMatch?,
+        warnings: MutableList<String>,
+    ): TaskDraft {
         val scope = parseScope(op.scope) ?: base?.scope ?: TaskScope.DAY
-        val date = DateMath.parseDate(op.date) ?: base?.scheduledDate ?: today
-        val timeMinutes = DateMath.parseTimeOfDay(op.time)
+        var date = DateMath.parseDate(op.date) ?: base?.scheduledDate ?: today
+        var timeMinutes = DateMath.parseTimeOfDay(op.time)
             ?: base?.dueAt?.let { DateMath.minutesOfDay(it, zone) }
+
+        // The user's own words win: small models routinely put "today at 3pm" on tomorrow.
+        if (hint?.date != null && hint.date != date) {
+            warnings += "Adjusted the date to ${DateMath.shortLabel(hint.date)} " +
+                "(you said \"${hint.datePhrase ?: "today"}\")."
+            date = hint.date
+        }
+        if (hint?.timeMinutes != null && hint.timeMinutes != timeMinutes) {
+            warnings += "Adjusted the time to ${Format.timeOfDay(hint.timeMinutes)} " +
+                "(you said \"${hint.timePhrase ?: Format.timeOfDay(hint.timeMinutes)}\")."
+            timeMinutes = hint.timeMinutes
+        }
+
         return TaskDraft(
             id = base?.taskId,
             title = op.title?.trim()?.takeIf { it.isNotEmpty() } ?: base?.title ?: "",
@@ -255,4 +296,9 @@ class PlanResolver(private val zoneProvider: () -> TimeZone) {
 
     private fun tokens(text: String): Set<String> =
         text.split(Regex("""[^\p{L}\p{N}]+""")).filter { it.length > 2 }.toSet()
+
+    private companion object {
+        /** Ops whose date/time the textual hint may correct. */
+        val SCHEDULING_OPS = setOf(AssistantOps.ADD, AssistantOps.UPDATE)
+    }
 }

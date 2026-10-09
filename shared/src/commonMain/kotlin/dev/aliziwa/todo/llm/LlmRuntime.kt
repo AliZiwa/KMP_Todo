@@ -53,7 +53,15 @@ sealed interface LlmUnavailable {
  * For [LlmBackend.LOCAL_ENGINE] this also owns *loading* the configured model file, so a restart
  * with a model already chosen does not need the user to press anything in Settings.
  */
-class LlmRuntimeFactory(private val platform: PlatformServices) {
+class LlmRuntimeFactory(
+    private val platform: PlatformServices,
+    /**
+     * JSON Schema for the assistant plan, passed to on-device engines that can constrain decoding.
+     * Injected (rather than imported) so this package stays independent of the assistant layer;
+     * `AppGraph` supplies `AssistantPlanSchema.STRICT`.
+     */
+    private val planJsonSchema: String? = null,
+) {
     private val tag = "LlmRuntimeFactory"
     private var cached: LlmRuntime? = null
     private var cacheKey: String? = null
@@ -98,7 +106,9 @@ class LlmRuntimeFactory(private val platform: PlatformServices) {
 
         val modelName = path.substringAfterLast('/').substringAfterLast('\\')
         val runtime = LlmRuntime(
-            executor = MultiLLMPromptExecutor(LocalEngineLLMClient(engine)),
+            executor = MultiLLMPromptExecutor(
+                LocalEngineLLMClient(engine, planJsonSchema = planJsonSchema)
+            ),
             model = LocalEngineLLMClient.modelFor(modelName, jsonMode = true),
             plainModel = LocalEngineLLMClient.modelFor(modelName, jsonMode = false),
             backend = LlmBackend.LOCAL_ENGINE,

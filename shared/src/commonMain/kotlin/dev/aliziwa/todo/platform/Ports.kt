@@ -105,6 +105,16 @@ data class GenerationOptions(
     val jsonMode: Boolean = true,
     val stopSequences: List<String> = emptyList(),
     val timeoutMillis: Long = 60_000,
+    /**
+     * A JSON Schema (draft-07 shaped, already valid JSON) the output should conform to, set only
+     * when [jsonMode] is true. Engines with schema-constrained decoding should use it — LiteRT-LM
+     * `ResponseFormat.json(schema)`, llama.cpp `jsonSchemaToGrammar` — and engines without it may
+     * ignore the field entirely.
+     *
+     * ADDITIVE (shared agent, wave 1): defaulted, so existing engine implementations are unaffected.
+     * The shared layer fills it from `dev.aliziwa.todo.assistant.AssistantPlanSchema.STRICT`.
+     */
+    val jsonSchema: String? = null,
 )
 
 sealed interface EngineState {

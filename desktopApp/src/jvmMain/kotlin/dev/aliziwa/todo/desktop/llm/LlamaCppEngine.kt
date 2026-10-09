@@ -62,6 +62,7 @@ class LlamaCppEngine(
 
     @Volatile private var model: LlamaModel? = null
     @Volatile private var activeIterator: LlamaIterator? = null
+    private val grammarCache = java.util.concurrent.ConcurrentHashMap<String, String>()
 
     override suspend fun load(modelPath: String): Result<Unit> = withContext(Dispatchers.IO) {
         loadLock.withLock {
@@ -125,8 +126,10 @@ class LlamaCppEngine(
                 if (options.stopSequences.isNotEmpty()) {
                     parameters.setStopStrings(*options.stopSequences.toTypedArray())
                 }
+                // jsonMode off => plain text, no grammar at all (the Settings connection probe and
+                // small talk must not be forced into JSON).
                 if (options.jsonMode) {
-                    parameters.setGrammar(JSON_GBNF)
+                    parameters.setGrammar(grammarFor(options.jsonSchema))
                 }
 
                 val deadline = System.currentTimeMillis() + options.timeoutMillis
@@ -150,6 +153,44 @@ class LlamaCppEngine(
             }
         }.flowOn(Dispatchers.IO)
 
+    /**
+     * Schema-constrained decoding when the shared layer supplies one.
+     *
+     * `LlamaModel.jsonSchemaToGrammar` is llama.cpp's own JSON-Schema -> GBNF converter (a static
+     * native call, available as soon as the binding's class initialiser has extracted the dylib).
+     * Converted grammars are cached per schema string: conversion is a JNI round trip and the
+     * assistant sends the same `AssistantPlanSchema.STRICT` on every plan request.
+     *
+     * Anything that is not a JSON object, or that the converter cannot express, falls back to
+     * [JSON_GBNF] ("any JSON") — still better than unconstrained decoding, and it keeps a schema
+     * change from breaking generation.
+     */
+    private fun grammarFor(jsonSchema: String?): String {
+        if (jsonSchema.isNullOrBlank()) return JSON_GBNF
+        grammarCache[jsonSchema]?.let { return it }
+        // The converter is C++: handing it something that is not even a JSON object aborts the
+        // whole process (SIGABRT) instead of throwing, which no runCatching can save us from.
+        // So pre-validate here and only cross the JNI boundary with a real JSON object.
+        if (!isJsonObject(jsonSchema)) {
+            DesktopLog.w(TAG, "jsonSchema is not a JSON object; using the generic JSON grammar")
+            grammarCache[jsonSchema] = JSON_GBNF
+            return JSON_GBNF
+        }
+        val grammar = runCatching { LlamaModel.jsonSchemaToGrammar(jsonSchema) }
+            .mapCatching { it.also { g -> require(!g.isNullOrBlank()) { "empty grammar" } } }
+            .getOrElse { error ->
+                DesktopLog.w(TAG, "jsonSchemaToGrammar failed; using the generic JSON grammar", error)
+                JSON_GBNF
+            }
+        grammarCache[jsonSchema] = grammar
+        DesktopLog.i(
+            TAG,
+            if (grammar === JSON_GBNF) "schema rejected; generic JSON grammar in use"
+            else "schema-constrained grammar built (${grammar.length} chars)",
+        )
+        return grammar
+    }
+
     override fun cancelGeneration() {
         val iterator = activeIterator ?: return
         DesktopLog.i(TAG, "cancelling generation")
@@ -158,6 +199,11 @@ class LlamaCppEngine(
     }
 
     // ------------------------------------------------------------------ internals
+
+    private fun isJsonObject(candidate: String): Boolean = runCatching {
+        val element = kotlinx.serialization.json.Json.parseToJsonElement(candidate)
+        element is kotlinx.serialization.json.JsonObject
+    }.getOrDefault(false)
 
     private fun fail(message: String): Result<Unit> {
         _state.value = EngineState.Error(message)

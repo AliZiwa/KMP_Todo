@@ -58,12 +58,20 @@ object ModelCatalog {
         gemma3_1b_it_litertlm,
     )
 
-    /** Suggestions the given engine can actually load. */
+    /**
+     * Suggestions the given engine can actually load, best first. The head of this list is the
+     * recommended default: Qwen2.5 **1.5B** on gguf platforms (macOS/iOS) and Gemma 3 1B on
+     * Android. The 0.5B build is only a fallback for tight disk/RAM, never the default.
+     */
     fun suggestionsFor(supportedExtensions: List<String>): List<ModelSuggestion> {
         if (supportedExtensions.isEmpty()) return all
         val normalized = supportedExtensions.map { it.lowercase().removePrefix(".") }
         return all.filter { it.extension in normalized }
     }
+
+    /** The recommended model for an engine, or null when nothing in the catalog fits. */
+    fun defaultFor(supportedExtensions: List<String>): ModelSuggestion? =
+        suggestionsFor(supportedExtensions).firstOrNull()
 
     /** Best-effort file name from an arbitrary download URL. */
     fun fileNameFromUrl(url: String): String? {

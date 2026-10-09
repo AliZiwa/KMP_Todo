@@ -1,8 +1,11 @@
 package dev.aliziwa.todo
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Chat
@@ -137,6 +140,10 @@ fun App(graph: AppGraph, initialRoute: String? = null) {
         }
 
         Scaffold(
+            // Keep the whole app (top bar included) out of the status bar / notch / home indicator.
+            // safeDrawing is zero on desktop, so only Android and iOS are affected.
+            modifier = Modifier.windowInsetsPadding(WindowInsets.safeDrawing),
+            contentWindowInsets = WindowInsets(0, 0, 0, 0),
             snackbarHost = { SnackbarHost(snackbar) },
             topBar = {
                 TopAppBar(
@@ -270,6 +277,9 @@ fun App(graph: AppGraph, initialRoute: String? = null) {
                             onReject = { graph.assistant.reject(it) },
                             onOpenSettings = { nav.push(Route.Settings) },
                             onReenable = { scope.launch { graph.assistant.reenable() } },
+                            suggestedModelName = ModelCatalog
+                                .defaultFor(graph.platform.localLlmEngine?.supportedExtensions ?: emptyList())
+                                ?.displayName,
                         )
                     }
 

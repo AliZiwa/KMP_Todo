@@ -43,6 +43,7 @@ internal class RecordingSoundPlayer : SoundPlayer {
  */
 internal class TestHarness(
     private val dir: File,
+    private val keepDir: Boolean,
     val graph: AppGraph,
     val ui: DesktopUiController,
     val sound: RecordingSoundPlayer,
@@ -57,7 +58,7 @@ internal class TestHarness(
         runCatching { graph.llmRuntimeFactory.close() }
         runCatching { graph.database.close() }
         DesktopTestHarness.resetTodoApp()
-        runCatching { dir.deleteRecursively() }
+        if (!keepDir) runCatching { dir.deleteRecursively() }
     }
 }
 
@@ -73,11 +74,22 @@ internal object DesktopTestHarness {
         }
     }
 
-    fun <T> withGraph(localLlmEngine: LocalLlmEngine? = null, block: (TestHarness) -> T): T {
+    /**
+     * @param dir reuse an existing data directory (and therefore its `todo.db`) so a test can
+     *   persist settings with one graph and then observe what a *fresh* `TodoApp.start` does with
+     *   them — which is how "does a saved model path load itself?" is verified.
+     * @param keepDir leave the directory behind on close, for the same reason.
+     */
+    fun <T> withGraph(
+        localLlmEngine: LocalLlmEngine? = null,
+        dir: File? = null,
+        keepDir: Boolean = false,
+        block: (TestHarness) -> T,
+    ): T {
         lock.lock()
         try {
             resetTodoApp()
-            val dir = Files.createTempDirectory("todo-desktop-it").toFile()
+            val dir = dir?.apply { mkdirs() } ?: Files.createTempDirectory("todo-desktop-it").toFile()
             val paths = object : AppPaths {
                 override val dataDir: String = dir.absolutePath
                 override val modelsDir: String = File(dir, "models").apply { mkdirs() }.absolutePath
@@ -110,7 +122,7 @@ internal object DesktopTestHarness {
                 jvmDatabaseBuilder(paths.databasePath),
             )
             alarms.start()
-            return TestHarness(dir, graph, ui, sound, alarms, scope).use(block)
+            return TestHarness(dir, keepDir, graph, ui, sound, alarms, scope).use(block)
         } finally {
             lock.unlock()
         }
@@ -139,4 +151,45 @@ internal suspend fun <T : Any> waitForValue(
         delay(100)
     }
     throw AssertionError("timed out after ${timeoutMillis}ms waiting for: $what")
+}
+
+/**
+ * A [LocalLlmEngine] whose load takes [loadDelayMillis], so the "Loading the model…" banner is
+ * observable without racing a real 300ms gguf load. [reply] is what every generation streams.
+ */
+internal class SlowFakeEngine(
+    private val loadDelayMillis: Long = 1_200,
+    private val reply: String = """{"reply":"ok","ops":[]}""",
+) : LocalLlmEngine {
+    private val _state = kotlinx.coroutines.flow.MutableStateFlow<dev.aliziwa.todo.platform.EngineState>(
+        dev.aliziwa.todo.platform.EngineState.NotLoaded,
+    )
+    override val state: kotlinx.coroutines.flow.StateFlow<dev.aliziwa.todo.platform.EngineState> = _state
+    override val supportedExtensions: List<String> = listOf("gguf")
+
+    /** Every GenerationOptions we were handed, so tests can assert on jsonMode / jsonSchema. */
+    val optionsSeen = CopyOnWriteArrayList<dev.aliziwa.todo.platform.GenerationOptions>()
+    @Volatile var loadCount: Int = 0
+
+    override suspend fun load(modelPath: String): Result<Unit> {
+        loadCount++
+        _state.value = dev.aliziwa.todo.platform.EngineState.Loading(null)
+        delay(loadDelayMillis)
+        _state.value = dev.aliziwa.todo.platform.EngineState.Ready(modelPath, File(modelPath).name)
+        return Result.success(Unit)
+    }
+
+    override suspend fun unload() {
+        _state.value = dev.aliziwa.todo.platform.EngineState.NotLoaded
+    }
+
+    override fun generate(
+        messages: List<dev.aliziwa.todo.platform.LlmMessage>,
+        options: dev.aliziwa.todo.platform.GenerationOptions,
+    ): kotlinx.coroutines.flow.Flow<String> {
+        optionsSeen += options
+        return kotlinx.coroutines.flow.flowOf(reply)
+    }
+
+    override fun cancelGeneration() = Unit
 }

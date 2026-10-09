@@ -152,11 +152,10 @@ class AssistantIntegrationTest {
      * Koog `AIAgent` -> `LocalEngineLLMClient` -> [LlamaCppEngine] -> llama.cpp on Metal, plus the
      * `testBackend()` probe the settings screen uses.
      *
-     * The strict "a 15:00 task exists" half runs only if the model produced a confirmable plan.
-     * Qwen2.5-0.5B-Instruct does not: it copies the op enum out of the prompt verbatim
-     * (`"add_task | update_task | ..."`), `PlanResolver` rejects it, and the shared layer then
-     * replies "I will add a task for you" without applying anything. That shared-layer gap is
-     * reported separately; a capable local model exercises the full assertion.
+     * `GenerationOptions.jsonSchema` now carries `AssistantPlanSchema.STRICT`, which
+     * [LlamaCppEngine] turns into a GBNF grammar via `LlamaModel.jsonSchemaToGrammar`, so even a
+     * 0.5B model can only emit a plan of the right shape. Whatever happens, the user must end up
+     * with a confirmation card — from the model, or from the repair / rule-parser fallback.
      */
     @Test
     fun `local llama cpp engine drives the assistant through Koog on Metal`() {
@@ -182,10 +181,13 @@ class AssistantIntegrationTest {
                         )
                     }
                 }
+                // With the schema-derived grammar in place the shared layer must now always end up
+                // with a confirmation card: either the model produced a valid plan, or the
+                // repair/rule-parser fallback did. A silent no-op is a failure.
                 h.runAddTaskFlow(
                     label = "llama.cpp/${ggufModel.name}",
                     generationTimeoutMillis = 180_000,
-                    requireConfirmablePlan = false,
+                    requireConfirmablePlan = true,
                 )
             }
         } finally {

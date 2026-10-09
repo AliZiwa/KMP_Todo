@@ -3,6 +3,13 @@ package dev.aliziwa.todo.assistant
 import dev.aliziwa.todo.util.Log
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.add
+import kotlinx.serialization.json.buildJsonArray
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
+import kotlinx.serialization.json.putJsonArray
+import kotlinx.serialization.json.putJsonObject
 
 /** Operation names the model must use. Flat shape — small models cope far better than with unions. */
 object AssistantOps {
@@ -107,4 +114,62 @@ object PlanJson {
         }
         return text.trim()
     }
+}
+
+/**
+ * A *machine* JSON Schema for [AssistantPlan], used for schema-constrained decoding by engines that
+ * support it (`GenerationOptions.jsonSchema`). It is built programmatically from [AssistantOps] so
+ * it can never drift from the op names, and is therefore always valid JSON.
+ *
+ * The human-facing rendering shown to the model lives in `Prompts.JSON_SCHEMA`; both derive their
+ * op list from [AssistantOps.all].
+ */
+object AssistantPlanSchema {
+
+    private fun stringProperty(description: String? = null): JsonObject = buildJsonObject {
+        put("type", "string")
+        description?.let { put("description", it) }
+    }
+
+    private fun enumProperty(values: List<String>): JsonObject = buildJsonObject {
+        put("type", "string")
+        putJsonArray("enum") { values.forEach { add(it) } }
+    }
+
+    /** The schema as a [JsonObject], if a platform prefers structured input. */
+    val element: JsonObject = buildJsonObject {
+        put("type", "object")
+        putJsonObject("properties") {
+            put("reply", stringProperty("one short sentence for the user"))
+            putJsonObject("ops") {
+                put("type", "array")
+                putJsonObject("items") {
+                    put("type", "object")
+                    putJsonObject("properties") {
+                        put("op", enumProperty(AssistantOps.all))
+                        put("title", stringProperty("the task title, or the title of the task to act on"))
+                        put("taskId", stringProperty("copy from the context list when you know it"))
+                        put("notes", stringProperty())
+                        put("priority", enumProperty(listOf("low", "medium", "high")))
+                        put("scope", enumProperty(listOf("day", "week", "month", "recurring_daily")))
+                        put("date", stringProperty("YYYY-MM-DD"))
+                        put("time", stringProperty("HH:MM, 24-hour"))
+                        putJsonObject("minutes") {
+                            put("type", "integer")
+                            put("description", "extend_task only")
+                        }
+                        put("question", stringProperty("clarify only"))
+                    }
+                    putJsonArray("required") { add("op") }
+                }
+            }
+        }
+        putJsonArray("required") {
+            add("reply")
+            add("ops")
+        }
+    }
+
+    /** The schema as a JSON string — this is what goes into `GenerationOptions.jsonSchema`. */
+    val STRICT: String = Json.encodeToString(JsonObject.serializer(), element)
 }

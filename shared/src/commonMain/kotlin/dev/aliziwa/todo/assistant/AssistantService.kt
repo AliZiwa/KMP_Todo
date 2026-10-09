@@ -193,7 +193,7 @@ class AssistantService(
                     else -> Unit
                 }
                 val plan = ruleParser.parse(text, now)
-                proposeOrReply(resolver.resolve(plan, snapshot, now, PlanSource.RULES))
+                proposeOrReply(resolver.resolve(plan, snapshot, now, PlanSource.RULES, text))
                 return
             }
             _mode.value = AssistantMode.READY
@@ -216,7 +216,7 @@ class AssistantService(
                 return
             }
 
-            val attempt = interpret(raw, snapshot, now)
+            val attempt = interpret(raw, snapshot, now, text)
             if (attempt.isSuccess) {
                 consecutiveFailures = 0
                 proposeOrReply(attempt.getOrThrow())
@@ -231,7 +231,7 @@ class AssistantService(
                     runAgent(runtime, systemPrompt, "$text\n\n$repairPrompt", jsonMode = true)
                 }
             }
-            val repaired = second.getOrNull()?.let { interpret(it, snapshot, now) }
+            val repaired = second.getOrNull()?.let { interpret(it, snapshot, now, text) }
             if (repaired?.isSuccess == true) {
                 consecutiveFailures = 0
                 proposeOrReply(repaired.getOrThrow())
@@ -261,9 +261,10 @@ class AssistantService(
         raw: String,
         snapshot: dev.aliziwa.todo.domain.TaskSnapshot,
         nowMillis: Long,
+        userText: String,
     ): Result<ResolvedPlan> {
         val parsed = PlanJson.parse(raw).getOrElse { return Result.failure(it) }
-        val resolved = resolver.resolve(parsed, snapshot, nowMillis, PlanSource.LLM)
+        val resolved = resolver.resolve(parsed, snapshot, nowMillis, PlanSource.LLM, userText)
         if (resolved.isFullRejectionOf(parsed)) {
             val detail = resolved.warnings.joinToString("; ").ifBlank {
                 "the \"op\" values were not real operations (got: " +
@@ -311,7 +312,7 @@ class AssistantService(
         } else {
             // First strike: silently fall back to the deterministic parser for this message.
             val plan = ruleParser.parse(text, nowMillis)
-            val resolved = resolver.resolve(plan, snapshot, nowMillis, PlanSource.RULES)
+            val resolved = resolver.resolve(plan, snapshot, nowMillis, PlanSource.RULES, text)
             append(ChatRole.SYSTEM, "Model hiccup ($reason) — used the built-in parser instead.")
             proposeOrReply(resolved)
         }
@@ -325,7 +326,7 @@ class AssistantService(
         note: String,
     ) {
         val plan = ruleParser.parse(text, nowMillis)
-        val resolved = resolver.resolve(plan, snapshot, nowMillis, PlanSource.RULES)
+        val resolved = resolver.resolve(plan, snapshot, nowMillis, PlanSource.RULES, text)
         val draft = resolved.actions.filterIsInstance<PlannedAction.Add>().firstOrNull()?.draft
             ?: TaskDraft(title = text.take(200), scope = TaskScope.DAY)
         _manualPrefill.value = draft
