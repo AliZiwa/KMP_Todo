@@ -65,7 +65,7 @@ if [ "$SKIP_BUILD" != "1" ]; then
   xcodebuild -project iosApp/iosApp.xcodeproj -scheme iosApp \
     -destination 'platform=iOS Simulator,name=iPhone 18 Pro Max' \
     -derivedDataPath iosApp/DerivedData \
-    -configuration Debug build --quiet
+    -configuration Debug build -quiet
 fi
 [ -d "$APP" ] || { echo "missing $APP" >&2; exit 1; }
 
