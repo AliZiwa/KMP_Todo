@@ -7,7 +7,8 @@
 #   DEVICES="iPhone 18 Pro Max" iosApp/scripts/screenshots.sh
 #
 # Writes store/screenshots/<device>/<appearance>/<n>-<route>.png.
-# Expected sizes: iPhone 18 Pro Max 1320x2868 (6.9"), iPad Pro 13-inch (M5) 2064x2752.
+# Expected sizes: iPhone 18 Pro Max 1320x2868 (6.9" slot), iPhone 18 Pro 1206x2622 (6.1"/6.3" slot),
+# iPad Pro 13-inch (M5) 2064x2752 (13" slot). App Store Connect validates these exactly.
 #
 # Needs a Debug build: the launch hooks (-todoDebugSeedDemo, -todoDebugRoute,
 # -todoDebugAssistantPrompt, -todoDebugProvisional) are all `#if DEBUG`.
@@ -22,7 +23,7 @@ BUNDLE_ID="dev.aliziwa.jukizareminder"
 : "${DEVELOPER_DIR:=/Applications/Xcode.app/Contents/Developer}"
 export DEVELOPER_DIR
 
-DEVICES_DEFAULT=$'iPhone 18 Pro Max\niPad Pro 13-inch (M5)'
+DEVICES_DEFAULT=$'iPhone 18 Pro Max\niPhone 18 Pro\niPad Pro 13-inch (M5)'
 DEVICES="${DEVICES:-$DEVICES_DEFAULT}"
 APPEARANCES="${APPEARANCES:-light dark}"
 ROUTES="${ROUTES:-today chat plan settings add}"

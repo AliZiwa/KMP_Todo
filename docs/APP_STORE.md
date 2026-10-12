@@ -154,6 +154,7 @@ Required sets for a universal app:
 | Device | Size | Count |
 |---|---|---|
 | iPhone 6.9-inch | 1320 × 2868 (portrait) | 3–10 (use 5) |
+| iPhone 6.1-inch / 6.3-inch | 1206 × 2622 (portrait) | 3–10 (use 5) — `store/screenshots/iphone-18-pro/` |
 | iPad 13-inch | 2064 × 2752 (portrait) | 3–10 (use 5) |
 
 Generate them, then drag them in in the order given in the caption plan at the end of
@@ -165,7 +166,7 @@ cd /Users/aliziwa/Documents/personal/personal-todo-kmp
 ./iosApp/scripts/screenshots.sh          # writes store/screenshots/
 ```
 
-- [ ] 5 iPhone 6.9-inch shots, exact pixel size, first one is the due-alert hero
+- [ ] 5 iPhone 6.9-inch shots and 5 iPhone 6.3-inch shots, exact pixel size, first one is the due-alert hero
 - [ ] 5 iPad 13-inch shots, exact pixel size
 - [ ] No device bezels drawn into the image unless they are pixel-accurate (Apple rejects
       inaccurate hardware mock-ups), no placeholder/lorem text, no other platform's hardware

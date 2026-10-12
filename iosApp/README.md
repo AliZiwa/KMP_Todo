@@ -110,7 +110,7 @@ DEVICES="iPhone 18 Pro Max" ROUTES="today chat" iosApp/scripts/screenshots.sh
 ```
 
 Writes `store/screenshots/<device>/<appearance>/<n>-<route>.png` for the two sizes App Store Connect
-wants: iPhone 18 Pro Max 1320×2868 and iPad Pro 13-inch (M5) 2064×2752. The script overrides the
+wants: iPhone 18 Pro Max 1320×2868 (6.9"), iPhone 18 Pro 1206×2622 (6.1"/6.3") and iPad Pro 13-inch (M5) 2064×2752. The script overrides the
 status bar to 9:41, seeds the demo data, and walks `today, chat, plan, settings, add`. The first
 launch of each pass is a warm-up: it absorbs the "plan your day" prompt, which otherwise hijacks the
 first route of a session.

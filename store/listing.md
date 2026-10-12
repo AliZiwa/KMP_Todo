@@ -171,7 +171,7 @@ Contact: ziwaali7@gmail.com
 ## Screenshot caption plan
 
 Screenshots are produced by `iosApp/scripts/screenshots.sh` into `store/screenshots/`
-(6.9-inch iPhone 1320×2868, 13-inch iPad 2064×2752). Captions sit in the frame header; keep each
+(6.9-inch iPhone 1320×2868, 6.3-inch iPhone 1206×2622, 13-inch iPad 2064×2752; same captions for both iPhone sizes). Captions sit in the frame header; keep each
 one ≤ 40 characters so it never wraps on the narrowest device.
 
 ### iPhone (6.9-inch) — 5 shots
