@@ -87,6 +87,11 @@ while IFS= read -r device; do
     --time "9:41" --batteryState charged --batteryLevel 100 \
     --wifiBars 3 --cellularBars 4 --operatorName "" >/dev/null
 
+  # A build at the pre-rename bundle id (or any stale copy) must not linger: an unanswered
+  # system prompt from an old build sits over SpringBoard, hides the status bar in captures
+  # and cannot be dismissed headlessly. If a capture still lacks the status bar, run
+  # `xcrun simctl erase <udid>` once and re-run this script.
+  xcrun simctl uninstall "$udid" dev.aliziwa.todo >/dev/null 2>&1 || true
   xcrun simctl install "$udid" "$APP" >/dev/null
 
   for appearance in $APPEARANCES; do
