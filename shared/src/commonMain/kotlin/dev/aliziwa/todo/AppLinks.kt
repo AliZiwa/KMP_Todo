@@ -6,8 +6,8 @@ package dev.aliziwa.todo
  * offline-first rule.
  */
 object AppLinks {
-    const val PRIVACY = "https://aliziwa.github.io/personal-todo-kmp/privacy.html"
-    const val SUPPORT = "https://aliziwa.github.io/personal-todo-kmp/support.html"
+    const val PRIVACY = "https://aliziwa.github.io/KMP_Todo/privacy.html"
+    const val SUPPORT = "https://aliziwa.github.io/KMP_Todo/support.html"
 }
 
 /** Store/product name, shown in Settings → About. */

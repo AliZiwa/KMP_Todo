@@ -102,9 +102,9 @@ First release.
 ## URLs
 | Field | Value |
 |---|---|
-| Support URL | `https://aliziwa.github.io/personal-todo-kmp/support.html` |
-| Marketing URL | `https://aliziwa.github.io/personal-todo-kmp/` |
-| Privacy Policy URL | `https://aliziwa.github.io/personal-todo-kmp/privacy.html` |
+| Support URL | `https://aliziwa.github.io/KMP_Todo/support.html` |
+| Marketing URL | `https://aliziwa.github.io/KMP_Todo/` |
+| Privacy Policy URL | `https://aliziwa.github.io/KMP_Todo/privacy.html` |
 
 ## Copyright
 ```

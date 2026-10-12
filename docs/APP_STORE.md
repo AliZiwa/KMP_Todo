@@ -24,19 +24,19 @@ points at the Command Line Tools on this machine and must not be changed.
 App Store Connect will not accept the listing without a reachable privacy-policy URL, so do this
 first and let DNS settle while you do the rest.
 
-1. Create the GitHub repository (it has no remote yet):
+1. The GitHub repository exists and `main` is pushed:
    ```sh
    cd /Users/aliziwa/Documents/personal/personal-todo-kmp
-   gh repo create aliziwa/personal-todo-kmp --public --source=. --remote=origin --push
+   # Repo already exists: https://github.com/AliZiwa/KMP_Todo (remote `origin`, branch `main` pushed).
    ```
    (If the repo should stay private, GitHub Pages on a private repo needs a paid plan — use
    `--public`, or host the two pages somewhere else and change the URLs in `store/listing.md`.)
 2. GitHub › the repo › **Settings › Pages** › Source: **Deploy from a branch** › Branch **`main`**,
    folder **`/docs`** › Save.
 3. Wait for the Pages deployment to go green, then check all three in a browser:
-   - `https://aliziwa.github.io/personal-todo-kmp/`
-   - `https://aliziwa.github.io/personal-todo-kmp/privacy.html`
-   - `https://aliziwa.github.io/personal-todo-kmp/support.html`
+   - `https://aliziwa.github.io/KMP_Todo/`
+   - `https://aliziwa.github.io/KMP_Todo/privacy.html`
+   - `https://aliziwa.github.io/KMP_Todo/support.html`
 
 `docs/.nojekyll` is already in place so Pages serves the files verbatim instead of running Jekyll
 over them. `docs/ARCHITECTURE.md` and `docs/PLAN.md` also live in `docs/` and will be publicly
@@ -108,7 +108,7 @@ must not be repeated in keywords), and the screenshot captions.
 App Store Connect › the app › **App Information**:
 
 - [ ] Subtitle, from `store/listing.md`
-- [ ] Privacy Policy URL: `https://aliziwa.github.io/personal-todo-kmp/privacy.html`
+- [ ] Privacy Policy URL: `https://aliziwa.github.io/KMP_Todo/privacy.html`
 - [ ] Category: Primary **Productivity**, Secondary **Utilities**
 - [ ] Content Rights: *"No, it does not contain, show, or access third-party content"* (see
       `store/age-rating-and-privacy.md` §4 — but settle the doorbell sound licence first, open item
@@ -127,8 +127,8 @@ App Store Connect › the app › **App Information**:
 ## 4. Fill in the version page (1.0)
 
 - [ ] Promotional text, Description, Keywords, What's New — all from `store/listing.md`
-- [ ] Support URL: `https://aliziwa.github.io/personal-todo-kmp/support.html`
-- [ ] Marketing URL: `https://aliziwa.github.io/personal-todo-kmp/`
+- [ ] Support URL: `https://aliziwa.github.io/KMP_Todo/support.html`
+- [ ] Marketing URL: `https://aliziwa.github.io/KMP_Todo/`
 - [ ] Copyright: `© 2026 Ali Ziwa`
 - [ ] Version: `1.0`
 - [ ] Release: *Manually release this version* (so you choose the moment it goes live)
