@@ -125,13 +125,27 @@ sealed interface EngineState {
 }
 
 /**
- * An on-device inference engine (llama.cpp on desktop/iOS, LiteRT-LM on Android).
- * The engine owns chat-template formatting for the model it loaded.
+ * A model that ships with the OS (e.g. Apple Intelligence). Engines exposing one need no model file.
+ */
+data class BuiltInModel(val id: String, val displayName: String)
+
+/**
+ * An on-device inference engine (llama.cpp on desktop, LiteRT-LM on Android, Apple Foundation
+ * Models on iOS). The engine owns chat-template formatting for the model it loaded.
  */
 interface LocalLlmEngine {
     val state: StateFlow<EngineState>
     /** Which file extensions this engine can load, e.g. ["gguf"] or ["litertlm", "task"]. */
     val supportedExtensions: List<String>
+
+    /**
+     * Non-null when the engine uses an OS-provided model. [load] then receives [BuiltInModel.id]
+     * as the path; [supportedExtensions] is empty and nothing is ever downloaded.
+     *
+     * ADDITIVE (shared agent, wave 3) — defaulted, so file-based engines are unaffected.
+     */
+    val builtInModel: BuiltInModel? get() = null
+
     suspend fun load(modelPath: String): Result<Unit>
     suspend fun unload()
     /** Streams generated text chunks. Completes normally when generation ends; throws on failure. */
@@ -160,6 +174,19 @@ interface PlatformCapabilities {
      * ADDITIVE (shared agent, wave 1) — default implementation means platforms need not implement it.
      */
     suspend fun freeSpaceBytes(directory: String): Long? = null
+
+    /**
+     * User-facing app version ("1.0.3", or "1.0.3 (42)"), shown in Settings → About.
+     * ADDITIVE (shared agent, wave 3) — empty string means "do not show a version line".
+     */
+    val appVersion: String get() = ""
+
+    /**
+     * True only where [setLaunchAtLogin] does something (macOS). The Settings "Launch at login"
+     * card is hidden otherwise — on iOS it is meaningless.
+     * ADDITIVE (shared agent, wave 3).
+     */
+    val supportsLaunchAtLogin: Boolean get() = false
 
     val platformName: String
 }

@@ -24,10 +24,9 @@ final class Bootstrap {
 
         Notif.registerCategories()
 
-        var engine: LocalLlmEngine?
-        #if LLAMA_ENABLED
-        engine = SwiftBackedLlmEngine(bridge: LlamaCppEngine())
-        #endif
+        // Apple Intelligence: no model file, no download. The shared layer sees a
+        // `builtInModel` and defaults the assistant to the local engine.
+        let engine: LocalLlmEngine = SwiftBackedLlmEngine(bridge: AppleFoundationModelEngine())
 
         let services = IosPlatformKt.buildIosPlatformServices(
             alarms: alarms,

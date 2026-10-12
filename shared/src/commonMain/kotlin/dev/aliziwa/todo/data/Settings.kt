@@ -24,6 +24,8 @@ data class AppSettings(
     /** Set to false by the 2-strike failure policy; the user re-enables it in settings. */
     val assistantEnabled: Boolean = true,
     val generationTimeoutMillis: Long = 60_000,
+    /** Used only for the greeting. Null (or blank) means greet without a name. */
+    val userName: String? = null,
 ) {
     fun toMap(): Map<String, String> = buildMap {
         put(Keys.LLM_BACKEND, llmBackend.name)
@@ -39,6 +41,7 @@ data class AppSettings(
         lastDailyPromptDate?.let { put(Keys.LAST_DAILY_PROMPT_DATE, it) }
         put(Keys.ASSISTANT_ENABLED, assistantEnabled.toString())
         put(Keys.GENERATION_TIMEOUT, generationTimeoutMillis.toString())
+        userName?.let { put(Keys.USER_NAME, it) }
     }
 
     object Keys {
@@ -55,6 +58,7 @@ data class AppSettings(
         const val LAST_DAILY_PROMPT_DATE = "prompt.lastShownDate"
         const val ASSISTANT_ENABLED = "assistant.enabled"
         const val GENERATION_TIMEOUT = "assistant.timeoutMillis"
+        const val USER_NAME = "user.name"
     }
 
     companion object {
@@ -82,6 +86,7 @@ data class AppSettings(
                     ?: defaults.assistantEnabled,
                 generationTimeoutMillis = values[Keys.GENERATION_TIMEOUT]?.toLongOrNull()
                     ?: defaults.generationTimeoutMillis,
+                userName = values[Keys.USER_NAME]?.trim()?.takeIf { it.isNotBlank() },
             )
         }
     }

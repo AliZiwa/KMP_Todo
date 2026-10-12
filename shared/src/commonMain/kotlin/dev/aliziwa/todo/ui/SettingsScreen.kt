@@ -15,21 +15,25 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.OpenInNew
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.outlined.AutoAwesome
 import androidx.compose.material.icons.outlined.CloudDownload
 import androidx.compose.material.icons.outlined.Computer
 import androidx.compose.material.icons.outlined.Dns
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.NotificationsActive
+import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Schedule
-import androidx.compose.material.icons.outlined.VolumeUp
 import androidx.compose.material.icons.outlined.WbSunny
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
@@ -48,13 +52,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import dev.aliziwa.todo.APP_DISPLAY_NAME
+import dev.aliziwa.todo.AppLinks
 import dev.aliziwa.todo.data.AppSettings
 import dev.aliziwa.todo.data.LlmBackend
 import dev.aliziwa.todo.llm.DownloadState
 import dev.aliziwa.todo.llm.ModelSuggestion
+import dev.aliziwa.todo.platform.BuiltInModel
 import dev.aliziwa.todo.platform.EngineState
 
-/** Everything configurable: LLM backend, model download, daily prompt, sound, launch at login. */
+/** Everything configurable: your name, LLM backend, model, daily prompt, sound, system, about. */
 @Composable
 fun SettingsScreen(
     settings: AppSettings,
@@ -65,6 +72,13 @@ fun SettingsScreen(
     downloadState: DownloadState,
     testResult: String?,
     assistantInManualFallback: Boolean,
+    /** Non-null when the on-device engine uses an OS-provided model: no downloads, just a status. */
+    builtInModel: BuiltInModel? = null,
+    /** From [dev.aliziwa.todo.platform.PlatformCapabilities]; empty hides the version line. */
+    appVersion: String = "",
+    platformName: String = "",
+    /** Only macOS can install a login item; the card is hidden everywhere else. */
+    supportsLaunchAtLogin: Boolean = false,
     onUpdate: ((AppSettings) -> AppSettings) -> Unit,
     onDownload: (url: String, fileName: String?) -> Unit,
     onCancelDownload: () -> Unit,
@@ -75,6 +89,10 @@ fun SettingsScreen(
     modifier: Modifier = Modifier,
 ) {
     var customUrl by remember { mutableStateOf("") }
+    // Deliberately un-keyed: the field saves on every keystroke, and re-keying on the round-tripped
+    // value would fight the user's cursor.
+    var userName by remember { mutableStateOf(settings.userName ?: "") }
+    var showAcknowledgements by remember { mutableStateOf(false) }
     var ollamaUrl by remember(settings.ollamaBaseUrl) { mutableStateOf(settings.ollamaBaseUrl) }
     var ollamaModel by remember(settings.ollamaModel) { mutableStateOf(settings.ollamaModel) }
     val palette = LocalTodoPalette.current
@@ -112,6 +130,21 @@ fun SettingsScreen(
             }
         }
 
+        SettingsCard("You", Icons.Outlined.Person) {
+            OutlinedTextField(
+                value = userName,
+                onValueChange = { typed ->
+                    userName = typed
+                    onUpdate { it.copy(userName = typed.trim().takeIf { name -> name.isNotEmpty() }) }
+                },
+                label = { Text("Your name") },
+                singleLine = true,
+                shape = MaterialTheme.shapes.small,
+                modifier = Modifier.fillMaxWidth(),
+            )
+            Hint("Only used for the greeting.")
+        }
+
         SettingsCard("Assistant engine", Icons.Outlined.AutoAwesome) {
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -124,12 +157,18 @@ fun SettingsScreen(
                 )
                 if (hasLocalEngine) {
                     SelectableChip(
-                        text = "On-device model",
+                        // An OS-provided model has a name worth showing ("Apple Intelligence");
+                        // a file-based engine is just "the on-device model".
+                        text = builtInModel?.displayName ?: "On-device model",
                         selected = settings.llmBackend == LlmBackend.LOCAL_ENGINE,
                         onClick = { onUpdate { it.copy(llmBackend = LlmBackend.LOCAL_ENGINE) } },
                         leading = {
                             Icon(
-                                Icons.Outlined.Computer,
+                                if (builtInModel != null) {
+                                    Icons.Outlined.AutoAwesome
+                                } else {
+                                    Icons.Outlined.Computer
+                                },
                                 contentDescription = null,
                                 modifier = Modifier.size(16.dp),
                                 tint = if (settings.llmBackend == LlmBackend.LOCAL_ENGINE) {
@@ -164,7 +203,25 @@ fun SettingsScreen(
             }
         }
 
-        if (settings.llmBackend == LlmBackend.LOCAL_ENGINE && hasLocalEngine) {
+        if (settings.llmBackend == LlmBackend.LOCAL_ENGINE && hasLocalEngine && builtInModel != null) {
+            // An OS-provided model: nothing to download, nothing to point at, nothing to accept.
+            SettingsCard(builtInModel.displayName, Icons.Outlined.AutoAwesome) {
+                Text(
+                    builtInEngineLabel(engineState),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = if (engineState is EngineState.Error) {
+                        MaterialTheme.colorScheme.error
+                    } else {
+                        MaterialTheme.colorScheme.onSurface
+                    },
+                )
+                Hint("Runs entirely on this device. Nothing leaves your phone.")
+                testResult?.let { Hint(it) }
+                TextButton(onClick = onTestBackend, shape = Pill) { Text("Test") }
+            }
+        }
+
+        if (settings.llmBackend == LlmBackend.LOCAL_ENGINE && hasLocalEngine && builtInModel == null) {
             SettingsCard("On-device model", Icons.Outlined.CloudDownload) {
                 Text(engineStateLabel(engineState), style = MaterialTheme.typography.bodyLarge)
                 settings.localModelPath?.let { Hint(it) }
@@ -282,15 +339,93 @@ fun SettingsScreen(
             Hint("Times show as ${if (settings.use24HourClock) "15:30" else "3:30 PM"} everywhere.")
         }
 
-        SettingsCard("System", Icons.Outlined.Schedule) {
-            ToggleRow("Launch at login", settings.launchAtLogin) { enabled ->
-                onUpdate { it.copy(launchAtLogin = enabled) }
+        // Only shown where a login item exists. `platformName == "macOS"` keeps desktop working
+        // until its capabilities class returns supportsLaunchAtLogin = true.
+        if (supportsLaunchAtLogin || platformName == "macOS") {
+            SettingsCard("System", Icons.Outlined.Schedule) {
+                ToggleRow("Launch at login", settings.launchAtLogin) { enabled ->
+                    onUpdate { it.copy(launchAtLogin = enabled) }
+                }
+                Hint("Keeps alarms exact: the app stays resident so a due time never slips.")
             }
-            Hint("Keeps alarms exact on desktop. Ignored where the platform does not support it.")
+        }
+
+        SettingsCard("About", Icons.Outlined.Info) {
+            Text(APP_DISPLAY_NAME, style = MaterialTheme.typography.titleMedium)
+            val versionLine = listOfNotNull(
+                appVersion.takeIf { it.isNotBlank() }?.let { "Version $it" },
+                platformName.takeIf { it.isNotBlank() },
+            ).joinToString(" · ")
+            if (versionLine.isNotEmpty()) Hint(versionLine)
+            LinkRow("Privacy policy", external = true) { onOpenUrl(AppLinks.PRIVACY) }
+            LinkRow("Support", external = true) { onOpenUrl(AppLinks.SUPPORT) }
+            LinkRow("Acknowledgements", external = false) { showAcknowledgements = true }
         }
 
         Spacer(Modifier.height(80.dp))
     }
+
+    if (showAcknowledgements) {
+        AcknowledgementsDialog(onClose = { showAcknowledgements = false })
+    }
+}
+
+/** A tappable settings row: label on the left, affordance on the right, 48dp tall. */
+@Composable
+private fun LinkRow(label: String, external: Boolean, onClick: () -> Unit) {
+    Surface(
+        onClick = onClick,
+        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+        shape = MaterialTheme.shapes.small,
+        modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp),
+    ) {
+        Row(
+            Modifier.padding(horizontal = 14.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(label, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
+            if (external) {
+                Icon(
+                    Icons.AutoMirrored.Outlined.OpenInNew,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(18.dp),
+                )
+            }
+        }
+    }
+}
+
+/** Open-source components we ship. Short by design; the licences are permissive. */
+private val ACKNOWLEDGEMENTS = listOf(
+    "Compose Multiplatform — Apache-2.0",
+    "AndroidX Room — Apache-2.0",
+    "Koog — Apache-2.0",
+    "Ktor — Apache-2.0",
+    "kotlinx (coroutines, serialization, datetime) — Apache-2.0",
+    "llama.cpp — MIT (desktop only)",
+    "LiteRT-LM — Apache-2.0 (Android only)",
+)
+
+@Composable
+private fun AcknowledgementsDialog(onClose: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onClose,
+        shape = MaterialTheme.shapes.extraLarge,
+        containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
+        title = { Text("Acknowledgements", style = MaterialTheme.typography.headlineSmall) },
+        text = {
+            Column(
+                Modifier.heightIn(max = 300.dp).verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                ACKNOWLEDGEMENTS.forEach { line ->
+                    Text(line, style = MaterialTheme.typography.bodyMedium)
+                }
+            }
+        },
+        confirmButton = { Button(onClick = onClose, shape = Pill) { Text("Close") } },
+    )
 }
 
 @Composable
@@ -386,6 +521,17 @@ private fun DownloadStatus(state: DownloadState, onUseModel: (String) -> Unit) {
         is DownloadState.Cancelled ->
             Hint("Cancelled — ${state.keptBytes / 1_000_000} MB kept, downloading again resumes.")
     }
+}
+
+/**
+ * Status for an OS-provided model. An error message here is the platform's own user-facing reason
+ * ("Apple Intelligence is turned off in Settings"), so it is shown verbatim.
+ */
+private fun builtInEngineLabel(state: EngineState?): String = when (state) {
+    null, EngineState.NotLoaded -> "Ready when you ask."
+    is EngineState.Loading -> "Warming up…"
+    is EngineState.Ready -> "Ready."
+    is EngineState.Error -> state.message
 }
 
 private fun engineStateLabel(state: EngineState?): String = when (state) {

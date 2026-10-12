@@ -404,6 +404,14 @@ class AssistantService(
         _messages.value = emptyList()
     }
 
+    /**
+     * Replaces the transcript wholesale. Only used by [dev.aliziwa.todo.data.DemoData] so the chat
+     * screen is not an empty state in App Store screenshots — nothing here is ever executed.
+     */
+    fun seedTranscript(messages: List<ChatMessage>) {
+        _messages.value = messages
+    }
+
     private fun append(
         role: ChatRole,
         text: String,

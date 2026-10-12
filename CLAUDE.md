@@ -17,8 +17,8 @@ Read `docs/ARCHITECTURE.md` (contracts, decisions, edge cases) and `docs/PLAN.md
   - `./gradlew :shared:linkDebugFrameworkIosSimulatorArm64` then `xcodebuild` inside `iosApp/`
 - Desktop packaging (`:desktopApp:packageDmg`) and `:desktopApp:run` use a non-Homebrew JDK discovered via `/usr/libexec/java_home`
   (Compose's `checkRuntime` rejects Homebrew JDKs); compilation still uses the pinned JDK 21. See `desktopApp/build.gradle.kts`.
-- iOS: `cd iosApp && xcodegen generate`; llama.cpp is vendored as an xcframework built by `iosApp/Vendor/build-llama-xcframework.sh`
-  (gitignored, 210 MB). See `iosApp/README.md`.
+- iOS: `cd iosApp && xcodegen generate`. The LLM engine is Apple's Foundation Models framework (iOS 26+, no vendored llama.cpp).
+  Screenshots for the store: `iosApp/scripts/screenshots.sh`. See `iosApp/README.md` and `docs/APP_STORE.md`.
 - Use `--console=plain` and redirect long output to a log file; grep for `error:` / `e: ` instead of dumping it.
 - Never run two Gradle builds concurrently in the same checkout from one agent; other agents may be building — if you see a lock
   timeout, wait 60s and retry rather than killing daemons.

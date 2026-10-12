@@ -53,6 +53,14 @@ object AndroidHttpEngineProvider : HttpEngineProvider {
 class AndroidCapabilities(private val context: Context) : PlatformCapabilities {
     override val platformName: String = "Android"
 
+    override val appVersion: String by lazy {
+        runCatching {
+            val info = context.packageManager.getPackageInfo(context.packageName, 0)
+            val code = androidx.core.content.pm.PackageInfoCompat.getLongVersionCode(info)
+            "${info.versionName} ($code)"
+        }.getOrDefault("")
+    }
+
     /** Android has no launch-at-login concept; the foreground service + BootReceiver cover it. */
     override suspend fun setLaunchAtLogin(enabled: Boolean): Boolean = false
     override suspend fun isLaunchAtLoginEnabled(): Boolean = true

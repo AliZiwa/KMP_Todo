@@ -22,6 +22,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -86,8 +88,16 @@ fun ChatScreen(
     onReject: (String) -> Unit,
     onOpenSettings: () -> Unit,
     onReenable: () -> Unit,
-    /** Name of the recommended on-device model, shown in the empty state when none is set up. */
+    /**
+     * Name of the recommended on-device model, shown in the empty state when none is set up.
+     * MUST be null on platforms whose engine ships an OS-provided model — there is nothing to
+     * download there, so the copy must never say "download X".
+     */
     suggestedModelName: String? = null,
+    /** Name of the OS-provided model (e.g. "Apple Intelligence") when the engine has one. */
+    builtInModelName: String? = null,
+    /** The built-in engine is in an error state; the user-facing reason is on the Settings screen. */
+    builtInModelFailed: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
     var input by remember { mutableStateOf("") }
@@ -110,19 +120,30 @@ fun ChatScreen(
                     )
                     if (mode != AssistantMode.READY) {
                         Text(
-                            if (suggestedModelName != null) {
-                                "Works offline without a model. For full natural language, " +
-                                    "download $suggestedModelName in Settings."
-                            } else {
-                                "Works offline without a model. Connect a local server in Settings " +
-                                    "for full natural language."
+                            when {
+                                builtInModelName != null && builtInModelFailed ->
+                                    "$builtInModelName is unavailable right now — Settings says why. " +
+                                        "The built-in parser still works."
+                                builtInModelName != null ->
+                                    "$builtInModelName runs this on your device. The built-in parser " +
+                                        "covers the basics meanwhile."
+                                suggestedModelName != null ->
+                                    "Works offline without a model. For full natural language, " +
+                                        "download $suggestedModelName in Settings."
+                                else ->
+                                    "Works offline without a model. Connect a local server in Settings " +
+                                        "for full natural language."
                             },
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             textAlign = TextAlign.Center,
                             modifier = Modifier.padding(horizontal = 32.dp, vertical = 8.dp),
                         )
-                        SelectableChip(text = "Set up a model", selected = false, onClick = onOpenSettings)
+                        SelectableChip(
+                            text = if (builtInModelName != null) "Open Settings" else "Set up a model",
+                            selected = false,
+                            onClick = onOpenSettings,
+                        )
                     }
                 }
             }
@@ -147,7 +168,14 @@ fun ChatScreen(
             }
         }
 
-        Surface(color = MaterialTheme.colorScheme.surfaceContainerLow) {
+        // The composer must never hide under the software keyboard. `WindowInsets.safeDrawing` at
+        // the app Scaffold already includes the IME and `windowInsetsPadding` CONSUMES what it
+        // applies, so this is a no-op there and never double-pads — it only kicks in if the shell
+        // ever stops padding the IME itself.
+        Surface(
+            color = MaterialTheme.colorScheme.surfaceContainerLow,
+            modifier = Modifier.imePadding(),
+        ) {
             Row(
                 modifier = Modifier.fillMaxWidth().padding(12.dp),
                 verticalAlignment = Alignment.CenterVertically,
@@ -160,7 +188,7 @@ fun ChatScreen(
                     enabled = !busy,
                     maxLines = 3,
                     shape = MaterialTheme.shapes.medium,
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(1f).heightIn(min = 52.dp),
                 )
                 if (busy) {
                     TypingDots(Modifier.padding(horizontal = 4.dp))

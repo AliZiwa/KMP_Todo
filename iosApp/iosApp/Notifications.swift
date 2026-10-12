@@ -96,8 +96,10 @@ enum Notif {
         var options: UNAuthorizationOptions = [.alert, .sound, .badge]
         #if DEBUG
         // -todoDebugProvisional 1 skips the (untappable) prompt in a headless simulator.
+        // `.provisional` is only granted silently when asked for WITHOUT `.alert` — combined
+        // with it, iOS still shows the prompt, which blocks screenshots.
         if UserDefaults.standard.bool(forKey: "todoDebugProvisional") {
-            options.insert(.provisional)
+            options = [.provisional, .sound, .badge]
         }
         #endif
         UNUserNotificationCenter.current().requestAuthorization(options: options) { granted, error in

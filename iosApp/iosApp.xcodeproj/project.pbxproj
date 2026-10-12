@@ -8,24 +8,25 @@
 
 /* Begin PBXBuildFile section */
 		07A253A71977FD61FB68876B /* TodoStatusWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A90F74619AB9C130AAAF4C5 /* TodoStatusWidget.swift */; };
+		09FED4B446BD58DF150C455A /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = C6D2DD7FE2E0BF5DB2A96B4B /* PrivacyInfo.xcprivacy */; };
 		113E3F3E479A8A698340EA7A /* IosCapabilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC686F3BD5F88C005DFA8A18 /* IosCapabilities.swift */; };
 		18199E8E50724EB1CB0BF458 /* TodoWidgetsBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9B75BA0B8DA6F7E56999AB1 /* TodoWidgetsBundle.swift */; };
-		1AACCD2A83CF362FE674E8D5 /* llama.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0614E39F1CA9217DE27FEF9E /* llama.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1C51B7040E987D5DD6C61504 /* doorbell.caf in Resources */ = {isa = PBXBuildFile; fileRef = 0AC4AD6202609FF92E7DC640 /* doorbell.caf */; };
-		26AD5923842755518205570D /* llama.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0614E39F1CA9217DE27FEF9E /* llama.xcframework */; };
+		22EA1CB33A17DCC6FC82406D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F543015C899423D4B01CEB2E /* Assets.xcassets */; };
 		2AE3192184F35984A6B5AE11 /* AppGroupState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A11028BA053AF030686EE2 /* AppGroupState.swift */; };
 		307C2654CD5972A25FB7FD87 /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 668CECA83ACC03A83C85A623 /* iOSApp.swift */; };
 		41A86210B8278E977F35B7A2 /* IosAlertPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD9274E2898F247742EF0543 /* IosAlertPresenter.swift */; };
 		475338DEFA7A2191C1C9F582 /* AppRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B48AA17C772F84F491FBD1A9 /* AppRouter.swift */; };
-		51870D993F23BD30FAE28623 /* LlamaCppEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E29F39A56A35B520DF5E799 /* LlamaCppEngine.swift */; };
 		56B0305B5D3847FC6B326502 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE8509E5A49E4A5CAAEB3ADB /* ContentView.swift */; };
 		652108EEAC319198ECAE0B05 /* AppGroupState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33A11028BA053AF030686EE2 /* AppGroupState.swift */; };
+		6C37D8156E2479F435369106 /* AppleFoundationModelEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D3BDB2B302B7FDBB64D99D4 /* AppleFoundationModelEngine.swift */; };
 		815DFCAA99C7A82816B7798C /* Bootstrap.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDFB57A3ECF627AE4297D4E4 /* Bootstrap.swift */; };
 		823C498BF5D1F4E85106451C /* IosAlarmScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6621515C0489F810D73AD135 /* IosAlarmScheduler.swift */; };
 		897415E23EA3C655F77F7250 /* TodoActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E41E6BDDE93B7F06657A946 /* TodoActivityAttributes.swift */; };
 		BBD1BAF3BFA4762BBBE617AA /* IosSoundPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE9348104DD3F7CDB8CDD3E /* IosSoundPlayer.swift */; };
 		BC240A2AD6607F006E13C24F /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77B18463F7D97492BE4664F /* Notifications.swift */; };
 		CFA9E90A08B5FE142C579542 /* TodoActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E41E6BDDE93B7F06657A946 /* TodoActivityAttributes.swift */; };
+		E393E3F3F5817AD299FB92C9 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 992CFF33DF29C5DF75CAEED2 /* PrivacyInfo.xcprivacy */; };
 		EF698BB1AB0245CB80762963 /* TodoWidgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 81ED080458C4CAAAA226C38C /* TodoWidgets.appex */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EF7478FD980D56D01F4272A0 /* TodoLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7D91169C22C8A76E0CF0EE5 /* TodoLiveActivity.swift */; };
 		FDE52B8D57A097A60A4CF366 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B6C1F485E0CF8BB70C9DDD2 /* AppDelegate.swift */; };
@@ -42,17 +43,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		DB76241340C08196BD9C492C /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				1AACCD2A83CF362FE674E8D5 /* llama.xcframework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		E99160E501832DB2CECE6CFF /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -67,9 +57,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		0614E39F1CA9217DE27FEF9E /* llama.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = llama.xcframework; path = Vendor/llama.xcframework; sourceTree = "<group>"; };
 		0A90F74619AB9C130AAAF4C5 /* TodoStatusWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoStatusWidget.swift; sourceTree = "<group>"; };
 		0AC4AD6202609FF92E7DC640 /* doorbell.caf */ = {isa = PBXFileReference; path = doorbell.caf; sourceTree = "<group>"; };
+		2D3BDB2B302B7FDBB64D99D4 /* AppleFoundationModelEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleFoundationModelEngine.swift; sourceTree = "<group>"; };
 		33A11028BA053AF030686EE2 /* AppGroupState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppGroupState.swift; sourceTree = "<group>"; };
 		4FE9348104DD3F7CDB8CDD3E /* IosSoundPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IosSoundPlayer.swift; sourceTree = "<group>"; };
 		6621515C0489F810D73AD135 /* IosAlarmScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IosAlarmScheduler.swift; sourceTree = "<group>"; };
@@ -77,28 +67,19 @@
 		81ED080458C4CAAAA226C38C /* TodoWidgets.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = TodoWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		86038AE1032E284E79B32AD6 /* iosApp.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = iosApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8B6C1F485E0CF8BB70C9DDD2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		8E29F39A56A35B520DF5E799 /* LlamaCppEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LlamaCppEngine.swift; sourceTree = "<group>"; };
+		992CFF33DF29C5DF75CAEED2 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		9E41E6BDDE93B7F06657A946 /* TodoActivityAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoActivityAttributes.swift; sourceTree = "<group>"; };
 		A7D91169C22C8A76E0CF0EE5 /* TodoLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoLiveActivity.swift; sourceTree = "<group>"; };
 		B48AA17C772F84F491FBD1A9 /* AppRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRouter.swift; sourceTree = "<group>"; };
 		B9B75BA0B8DA6F7E56999AB1 /* TodoWidgetsBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoWidgetsBundle.swift; sourceTree = "<group>"; };
 		BD9274E2898F247742EF0543 /* IosAlertPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IosAlertPresenter.swift; sourceTree = "<group>"; };
+		C6D2DD7FE2E0BF5DB2A96B4B /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		CE8509E5A49E4A5CAAEB3ADB /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		E77B18463F7D97492BE4664F /* Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
 		EDFB57A3ECF627AE4297D4E4 /* Bootstrap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bootstrap.swift; sourceTree = "<group>"; };
+		F543015C899423D4B01CEB2E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		FC686F3BD5F88C005DFA8A18 /* IosCapabilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IosCapabilities.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
-
-/* Begin PBXFrameworksBuildPhase section */
-		EF8A6E9BFD470986D9D5C9B5 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				26AD5923842755518205570D /* llama.xcframework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		1DB4B685CAEE8BEFEBBAEF94 /* iosApp */ = {
@@ -108,10 +89,12 @@
 				1EEC3D4E9285A39087C3ADA0 /* Resources */,
 				8B6C1F485E0CF8BB70C9DDD2 /* AppDelegate.swift */,
 				B48AA17C772F84F491FBD1A9 /* AppRouter.swift */,
+				F543015C899423D4B01CEB2E /* Assets.xcassets */,
 				EDFB57A3ECF627AE4297D4E4 /* Bootstrap.swift */,
 				CE8509E5A49E4A5CAAEB3ADB /* ContentView.swift */,
 				668CECA83ACC03A83C85A623 /* iOSApp.swift */,
 				E77B18463F7D97492BE4664F /* Notifications.swift */,
+				C6D2DD7FE2E0BF5DB2A96B4B /* PrivacyInfo.xcprivacy */,
 			);
 			path = iosApp;
 			sourceTree = "<group>";
@@ -133,21 +116,12 @@
 			path = SharedSwift;
 			sourceTree = "<group>";
 		};
-		3666012298E772D226418813 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				0614E39F1CA9217DE27FEF9E /* llama.xcframework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 		38B69C3F79CD97858CF7B609 = {
 			isa = PBXGroup;
 			children = (
 				1DB4B685CAEE8BEFEBBAEF94 /* iosApp */,
 				269B526A4A4FCA2ABE65BA1A /* SharedSwift */,
 				3A42FC90F20956B2C89968F5 /* TodoWidgets */,
-				3666012298E772D226418813 /* Frameworks */,
 				94C98B8B3A2BFC1966447269 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -155,6 +129,7 @@
 		3A42FC90F20956B2C89968F5 /* TodoWidgets */ = {
 			isa = PBXGroup;
 			children = (
+				992CFF33DF29C5DF75CAEED2 /* PrivacyInfo.xcprivacy */,
 				A7D91169C22C8A76E0CF0EE5 /* TodoLiveActivity.swift */,
 				0A90F74619AB9C130AAAF4C5 /* TodoStatusWidget.swift */,
 				B9B75BA0B8DA6F7E56999AB1 /* TodoWidgetsBundle.swift */,
@@ -174,11 +149,11 @@
 		F7C7F6B34F1E1AA6A8639599 /* Ports */ = {
 			isa = PBXGroup;
 			children = (
+				2D3BDB2B302B7FDBB64D99D4 /* AppleFoundationModelEngine.swift */,
 				6621515C0489F810D73AD135 /* IosAlarmScheduler.swift */,
 				BD9274E2898F247742EF0543 /* IosAlertPresenter.swift */,
 				FC686F3BD5F88C005DFA8A18 /* IosCapabilities.swift */,
 				4FE9348104DD3F7CDB8CDD3E /* IosSoundPlayer.swift */,
-				8E29F39A56A35B520DF5E799 /* LlamaCppEngine.swift */,
 			);
 			path = Ports;
 			sourceTree = "<group>";
@@ -193,9 +168,7 @@
 				C263BE7E68B1B2B41CE2771C /* Build Kotlin framework */,
 				297B59D9CE634556D6007C40 /* Sources */,
 				1623B02D10928C8101C1F806 /* Resources */,
-				EF8A6E9BFD470986D9D5C9B5 /* Frameworks */,
 				E99160E501832DB2CECE6CFF /* Embed Foundation Extensions */,
-				DB76241340C08196BD9C492C /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -214,6 +187,7 @@
 			buildConfigurationList = 20D3322EAC75A0603D7D9D86 /* Build configuration list for PBXNativeTarget "TodoWidgets" */;
 			buildPhases = (
 				0973DDA0576ED67D6407F997 /* Sources */,
+				3543DA13799BF3B44035B22E /* Resources */,
 			);
 			buildRules = (
 			);
@@ -236,11 +210,11 @@
 				LastUpgradeCheck = 2600;
 				TargetAttributes = {
 					78B53CC79860CBFC2F5543C6 = {
-						DevelopmentTeam = "";
+						DevelopmentTeam = 487Q4488BH;
 						ProvisioningStyle = Automatic;
 					};
 					E1AC767BEC663CD780361CAF = {
-						DevelopmentTeam = "";
+						DevelopmentTeam = 487Q4488BH;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -270,7 +244,17 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				22EA1CB33A17DCC6FC82406D /* Assets.xcassets in Resources */,
+				09FED4B446BD58DF150C455A /* PrivacyInfo.xcprivacy in Resources */,
 				1C51B7040E987D5DD6C61504 /* doorbell.caf in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3543DA13799BF3B44035B22E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E393E3F3F5817AD299FB92C9 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -318,13 +302,13 @@
 				FDE52B8D57A097A60A4CF366 /* AppDelegate.swift in Sources */,
 				2AE3192184F35984A6B5AE11 /* AppGroupState.swift in Sources */,
 				475338DEFA7A2191C1C9F582 /* AppRouter.swift in Sources */,
+				6C37D8156E2479F435369106 /* AppleFoundationModelEngine.swift in Sources */,
 				815DFCAA99C7A82816B7798C /* Bootstrap.swift in Sources */,
 				56B0305B5D3847FC6B326502 /* ContentView.swift in Sources */,
 				823C498BF5D1F4E85106451C /* IosAlarmScheduler.swift in Sources */,
 				41A86210B8278E977F35B7A2 /* IosAlertPresenter.swift in Sources */,
 				113E3F3E479A8A698340EA7A /* IosCapabilities.swift in Sources */,
 				BBD1BAF3BFA4762BBBE617AA /* IosSoundPlayer.swift in Sources */,
-				51870D993F23BD30FAE28623 /* LlamaCppEngine.swift in Sources */,
 				BC240A2AD6607F006E13C24F /* Notifications.swift in Sources */,
 				CFA9E90A08B5FE142C579542 /* TodoActivityAttributes.swift in Sources */,
 				307C2654CD5972A25FB7FD87 /* iOSApp.swift in Sources */,
@@ -378,7 +362,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 487Q4488BH;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
@@ -390,12 +374,12 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = LLAMA_ENABLED;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
@@ -459,7 +443,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 487Q4488BH;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
@@ -477,13 +461,13 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG LLAMA_ENABLED";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -494,6 +478,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = iosApp/iosApp.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
@@ -501,7 +486,6 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)",
-					"\"Vendor\"",
 				);
 				INFOPLIST_FILE = iosApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -515,7 +499,7 @@
 					Shared,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = dev.aliziwa.todo;
-				PRODUCT_NAME = PersonalTodo;
+				PRODUCT_NAME = Doorbell;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -525,6 +509,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = iosApp/iosApp.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
@@ -532,7 +517,6 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)",
-					"\"Vendor\"",
 				);
 				INFOPLIST_FILE = iosApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -546,7 +530,7 @@
 					Shared,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = dev.aliziwa.todo;
-				PRODUCT_NAME = PersonalTodo;
+				PRODUCT_NAME = Doorbell;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

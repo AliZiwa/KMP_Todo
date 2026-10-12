@@ -5,7 +5,8 @@
 shared/       KMP library (android, jvm, iosArm64, iosSimulatorArm64). Compose UI + domain + Room + Koog assistant.
 androidApp/   Android app: foreground service (sticky notification), AlarmManager alarms, full-screen due alerts, LiteRT-LM engine.
 desktopApp/   macOS Compose Desktop app: menu-bar Tray, always-on-top alert window, LaunchAgent (launch at login), llama.cpp (java-llama.cpp) engine, Ollama connection.
-iosApp/       Xcode project (generated with xcodegen) hosting ComposeUIViewController; UNUserNotifications, Live Activity, llama.cpp via SPM.
+iosApp/       Xcode project (generated with xcodegen) hosting ComposeUIViewController; UNUserNotifications, Live Activity, Apple Foundation
+              Models (on-device, iOS 26+) as the LLM engine. Ships on the App Store as "Doorbell" (see docs/APP_STORE.md).
 ```
 Toolchain: Kotlin 2.4.21, Compose MP 1.12.1, AGP 9.4.1 (`com.android.kotlin.multiplatform.library` for shared), KSP 2.3.12,
 Room 2.8.5 (bundled SQLite on all platforms), Koog 1.3.0, Gradle 9.8.1, JDK 21.
@@ -71,7 +72,12 @@ User text ──► AssistantService.handle(text, context: today's tasks summary
 Koog is REQUIRED (`ai.koog:koog-agents`). Local engines are exposed to Koog via a custom `LLMClient` (`LocalEngineLLMClient`) built
 on the `LocalLlmEngine` port; Ollama via Koog's `OllamaClient`.
 Default model suggestions (user can paste any Hugging Face *resolve* URL):
-  desktop/iOS (gguf): Qwen2.5-1.5B-Instruct-Q4_K_M.gguf; Android (litertlm): gemma-3-1b-it (LiteRT-LM community build).
+  desktop (gguf): Qwen2.5-1.5B-Instruct-Q4_K_M.gguf; Android (litertlm): gemma-3-1b-it (LiteRT-LM community build).
+  iOS has no download: `LocalLlmEngine.builtInModel` (additive port member) marks an OS-provided model (Apple Intelligence); the
+  runtime then passes `builtInModel.id` to `load()` and the UI hides the download card. First run defaults to LOCAL_ENGINE there.
+Settings also hold `userName` (greeting only; no hard-coded name ships), `PlatformCapabilities.appVersion` /
+`supportsLaunchAtLogin` drive the About card and the launch-at-login toggle, and `AppLinks` holds the privacy/support URLs.
+`data/DemoData.kt` seeds a demo day + chat transcript for store screenshots (debug launch flags only; never in normal runs).
 Downloader: Ktor streaming to `modelsDir/<filename>.part` with Range resume, progress, cancel, free-space check (file size via HEAD),
 rename on completion, SHA256 optional, reject non-matching extension for the platform engine.
 ```
@@ -85,7 +91,7 @@ rename on completion, SHA256 optional, reject non-matching extension for the pla
 | Sticky alert | Always-on-top undecorated window with Done / Extend / Dismiss / Delete | Full-screen Activity over lock screen + ongoing notification with same actions | Alert UI on open; notification actions Done / +15 / Dismiss |
 | Launch on login + morning prompt | `~/Library/LaunchAgents/dev.aliziwa.todo.plist` (RunAtLoad, KeepAlive) installed from Settings (default on first run) ; daily "Plan your day" window | BootReceiver + daily alarm → notification "Plan your day" (tap opens plan sheet) | Daily local notification "Plan your day"; plan sheet on open |
 | Storage | Room + bundled SQLite in `~/Library/Application Support/PersonalTodo/todo.db` | Room + bundled SQLite | Room + bundled SQLite in Application Support |
-| On-device LLM | java-llama.cpp (gguf, Metal) | LiteRT-LM via Koog `prompt-executor-litert-client` (litertlm) | llama.cpp Swift package (gguf), bridged through `LocalLlmEngine` implemented in Swift |
+| On-device LLM | java-llama.cpp (gguf, Metal) | LiteRT-LM via Koog `prompt-executor-litert-client` (litertlm) | Apple Foundation Models (`SystemLanguageModel`, guided generation from the plan JSON schema), Swift `NativeLlmBridge` wrapped by `SwiftBackedLlmEngine`; unavailable device → rules / local server |
 | Connect to local server LLM | Ollama / LM Studio (OpenAI-compatible) via Koog | same (LAN URL) | same (LAN URL) |
 
 ## Edge cases checklist (every agent verifies the ones in their area)

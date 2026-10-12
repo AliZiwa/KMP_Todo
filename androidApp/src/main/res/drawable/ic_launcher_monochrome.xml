@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Themed-icon (API 33+) layer: the same mark as an outline silhouette so the launcher can tint it.
+  The bezel becomes a stroked ring (outer 296, inner 220) instead of a filled disc, otherwise the
+  whole mark would tint to one solid blob.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="1024"
+    android:viewportHeight="1024">
+    <group
+        android:pivotX="512"
+        android:pivotY="512"
+        android:scaleX="0.79"
+        android:scaleY="0.79">
+        <path
+            android:pathData="M785.3,248 A380,380 0 0 1 785.3,776"
+            android:strokeColor="#FFFFFF"
+            android:strokeWidth="50"
+            android:strokeLineCap="round" />
+        <path
+            android:pathData="M238.7,248 A380,380 0 0 0 238.7,776"
+            android:strokeColor="#FFFFFF"
+            android:strokeWidth="50"
+            android:strokeLineCap="round" />
+        <path
+            android:pathData="M254,512 A258,258 0 1 0 770,512 A258,258 0 1 0 254,512 Z"
+            android:strokeColor="#FFFFFF"
+            android:strokeWidth="76" />
+        <path
+            android:pathData="M402,516 L480,596 L624,440"
+            android:strokeColor="#FFFFFF"
+            android:strokeWidth="64"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round" />
+    </group>
+</vector>

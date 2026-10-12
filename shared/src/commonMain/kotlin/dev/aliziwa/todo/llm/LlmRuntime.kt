@@ -93,7 +93,11 @@ class LlmRuntimeFactory(
     private suspend fun resolveLocalEngine(settings: AppSettings): Result<LlmRuntime> {
         val engine = platform.localLlmEngine
             ?: return Result.failure(LlmUnavailableException(LlmUnavailable.NoLocalEngine))
-        val path = settings.localModelPath
+        // An engine with an OS-provided model (Apple Intelligence) needs no file: its id IS the
+        // "path" handed to load(), and there is never anything for the user to configure.
+        val builtIn = engine.builtInModel
+        val path = builtIn?.id
+            ?: settings.localModelPath
             ?: return Result.failure(LlmUnavailableException(LlmUnavailable.NoModelConfigured))
 
         // The engine state is authoritative — never hand back a cached runtime for an engine that
@@ -104,7 +108,8 @@ class LlmRuntimeFactory(
         cached?.let { if (cacheKey == key) return Result.success(it) }
         close()
 
-        val modelName = path.substringAfterLast('/').substringAfterLast('\\')
+        val modelName = builtIn?.displayName
+            ?: path.substringAfterLast('/').substringAfterLast('\\')
         val runtime = LlmRuntime(
             executor = MultiLLMPromptExecutor(
                 LocalEngineLLMClient(engine, planJsonSchema = planJsonSchema)
@@ -216,8 +221,11 @@ class LlmRuntimeFactory(
         cacheKey = null
     }
 
-    private fun cacheKeyFor(s: AppSettings): String =
-        "${s.llmBackend}|${s.localModelPath}|${s.ollamaBaseUrl}|${s.ollamaModel}|${s.generationTimeoutMillis}"
+    private fun cacheKeyFor(s: AppSettings): String {
+        // A built-in model's id is what actually gets loaded, so it — not localModelPath — keys the cache.
+        val local = platform.localLlmEngine?.builtInModel?.id ?: s.localModelPath
+        return "${s.llmBackend}|$local|${s.ollamaBaseUrl}|${s.ollamaModel}|${s.generationTimeoutMillis}"
+    }
 }
 
 class LlmUnavailableException(val reason: LlmUnavailable) : Exception(reason.describe())

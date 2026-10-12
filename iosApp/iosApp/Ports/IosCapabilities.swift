@@ -9,6 +9,18 @@ final class IosCapabilities: NSObject, Shared.PlatformCapabilities {
 
     var platformName: String { "iOS" }
 
+    /// "1.0 (1)" — marketing version plus build, for Settings → About.
+    var appVersion: String {
+        let info = Bundle.main.infoDictionary
+        let short = info?["CFBundleShortVersionString"] as? String ?? ""
+        let build = info?["CFBundleVersion"] as? String ?? ""
+        if short.isEmpty { return build }
+        return build.isEmpty ? short : "\(short) (\(build))"
+    }
+
+    /// iOS has no launch-at-login; the Settings card stays hidden.
+    var supportsLaunchAtLogin: Bool { false }
+
     func bringToFront() {
         // Not possible on iOS.
     }

@@ -47,7 +47,8 @@
         android:allowBackup="true"
         android:fullBackupContent="@xml/backup_rules"
         android:supportsRtl="true"
-        android:icon="@drawable/ic_notification"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:theme="@style/Theme.PersonalTodo">
 
         <activity

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Adaptive-icon foreground, converted by hand from store/brand/icon.svg.
+  The artwork is authored on the SVG's 1024 grid; the group scales it to 0.79 so the whole
+  composition (ring waves included) stays inside the 66dp safe zone of the 108dp viewport.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="1024"
+    android:viewportHeight="1024">
+    <group
+        android:pivotX="512"
+        android:pivotY="512"
+        android:scaleX="0.79"
+        android:scaleY="0.79">
+        <!-- Ring waves -->
+        <path
+            android:pathData="M785.3,248 A380,380 0 0 1 785.3,776"
+            android:strokeColor="#FFCBBB"
+            android:strokeWidth="50"
+            android:strokeLineCap="round" />
+        <path
+            android:pathData="M238.7,248 A380,380 0 0 0 238.7,776"
+            android:strokeColor="#FFCBBB"
+            android:strokeWidth="50"
+            android:strokeLineCap="round" />
+        <!-- Bezel -->
+        <path
+            android:pathData="M216,512 A296,296 0 1 0 808,512 A296,296 0 1 0 216,512 Z"
+            android:fillColor="#FFF8F5" />
+        <!-- Button -->
+        <path
+            android:pathData="M292,512 A220,220 0 1 0 732,512 A220,220 0 1 0 292,512 Z"
+            android:fillColor="#12948B" />
+        <!-- Tick -->
+        <path
+            android:pathData="M402,516 L480,596 L624,440"
+            android:strokeColor="#FFF8F5"
+            android:strokeWidth="64"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round" />
+    </group>
+</vector>

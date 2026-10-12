@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -82,6 +83,11 @@ fun TimePickerField(
     nowMinutes: Int? = null,
     allowClear: Boolean = true,
     initiallyOpen: Boolean = false,
+    /**
+     * Renders the pill at [SelectableChip] scale so the two can share a row at phone width.
+     * Off by default, so the task editor and the settings screen keep the big, tappable pill.
+     */
+    compact: Boolean = false,
 ) {
     var open by remember { mutableStateOf(initiallyOpen) }
     val palette = LocalTodoPalette.current
@@ -103,10 +109,16 @@ fun TimePickerField(
             shape = Pill,
             color = if (hasValue) MaterialTheme.colorScheme.secondaryContainer
             else MaterialTheme.colorScheme.surfaceContainerHigh,
-            modifier = Modifier.bouncyPress(interaction),
+            modifier = Modifier
+                .then(if (compact) Modifier.heightIn(min = 40.dp) else Modifier)
+                .bouncyPress(interaction),
         ) {
             Row(
-                Modifier.padding(horizontal = 18.dp, vertical = 11.dp),
+                if (compact) {
+                    Modifier.padding(horizontal = 14.dp, vertical = 9.dp)
+                } else {
+                    Modifier.padding(horizontal = 18.dp, vertical = 11.dp)
+                },
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Icon(
@@ -114,12 +126,16 @@ fun TimePickerField(
                     contentDescription = null,
                     tint = if (hasValue) MaterialTheme.colorScheme.onSecondaryContainer
                     else MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.size(20.dp),
+                    modifier = Modifier.size(if (compact) 16.dp else 20.dp),
                 )
-                Spacer(Modifier.width(10.dp))
+                Spacer(Modifier.width(if (compact) 6.dp else 10.dp))
                 Text(
                     TimeText.formatOrNone(minutes, use24Hour),
-                    style = MaterialTheme.typography.headlineSmall,
+                    style = if (compact) {
+                        MaterialTheme.typography.labelLarge
+                    } else {
+                        MaterialTheme.typography.headlineSmall
+                    },
                     color = if (hasValue) MaterialTheme.colorScheme.onSecondaryContainer
                     else MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -279,7 +295,8 @@ private fun WheelPicker(
     selected: Int,
     onSelected: (Int) -> Unit,
     modifier: Modifier = Modifier,
-    itemHeight: Dp = 42.dp,
+    // 44dp is the smallest comfortable touch target; the fling snaps to whole items either way.
+    itemHeight: Dp = 44.dp,
     visibleItems: Int = 5,
 ) {
     val startIndex = values.indexOf(selected).coerceAtLeast(0)
@@ -373,7 +390,7 @@ private fun MeridiemButton(text: String, selected: Boolean, onClick: () -> Unit)
             style = MaterialTheme.typography.labelLarge,
             color = if (selected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
-            modifier = Modifier.padding(vertical = 9.dp).fillMaxWidth(),
+            modifier = Modifier.padding(vertical = 11.dp).fillMaxWidth(),
         )
     }
 }
@@ -387,14 +404,16 @@ fun QuickChip(text: String, onClick: () -> Unit) {
         interactionSource = interaction,
         shape = Pill,
         color = MaterialTheme.colorScheme.surfaceContainerHigh,
-        modifier = Modifier.bouncyPress(interaction),
+        modifier = Modifier.heightIn(min = 40.dp).bouncyPress(interaction),
     ) {
-        Text(
-            text,
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 7.dp),
-        )
+        Box(contentAlignment = Alignment.Center) {
+            Text(
+                text,
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(horizontal = 14.dp, vertical = 7.dp),
+            )
+        }
     }
 }
 
@@ -510,6 +529,8 @@ fun SelectableChip(
         shape = Pill,
         color = container,
         modifier = modifier
+            // Touch target floor; phones need 40dp+ even though the label is small.
+            .heightIn(min = 40.dp)
             .bouncyPress(interaction)
             .graphicsLayer {
                 scaleX = pop
@@ -517,7 +538,7 @@ fun SelectableChip(
             },
     ) {
         Row(
-            Modifier.padding(horizontal = 14.dp, vertical = 9.dp),
+            Modifier.padding(horizontal = 16.dp, vertical = 9.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             if (leading != null) {

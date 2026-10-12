@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Doorbell — Support</title>
+<meta name="color-scheme" content="light dark">
+<style>
+  :root {
+    --bg: #FFF8F5; --card: #FFFFFF; --ink: #2B1A16; --muted: #6D544D;
+    --coral: #F2654E; --teal: #12948B; --line: #F0DBD2; --chip: #FFEDE5;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1A1211; --card: #261B1A; --ink: #F2DFD9; --muted: #C3ABA4;
+      --coral: #FFB4A3; --teal: #7FD7CD; --line: #3A2B28; --chip: #2E2220;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; padding: 0 20px 72px;
+    background: var(--bg); color: var(--ink);
+    font: 17px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  .wrap { max-width: 680px; margin: 0 auto; }
+  header { padding: 48px 0 8px; }
+  .mark { display: block; width: 76px; height: 76px; border-radius: 20px; }
+  h1 { font-size: 34px; line-height: 1.15; letter-spacing: -0.02em; margin: 22px 0 6px; }
+  h2 { font-size: 21px; letter-spacing: -0.01em; margin: 38px 0 10px; }
+  h3 { font-size: 17px; margin: 26px 0 6px; }
+  p, li { color: var(--ink); }
+  .lede { font-size: 19px; color: var(--muted); margin: 0 0 8px; }
+  .meta { color: var(--muted); font-size: 14px; margin: 4px 0 0; }
+  a { color: var(--coral); text-underline-offset: 3px; }
+  ul { padding-left: 22px; }
+  li { margin: 6px 0; }
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 20px;
+    padding: 20px 22px; margin: 18px 0;
+  }
+  .card h3:first-child, .card h2:first-child { margin-top: 0; }
+  .chip {
+    display: inline-block; background: var(--chip); color: var(--muted);
+    border-radius: 999px; padding: 5px 13px; font-size: 13px; margin: 0 6px 6px 0;
+  }
+  .q { font-weight: 600; margin: 0 0 4px; }
+  .a { margin: 0; color: var(--muted); }
+  nav.top { margin: 26px 0 0; }
+  nav.top a { margin-right: 18px; font-size: 15px; }
+  footer {
+    margin-top: 48px; padding-top: 22px; border-top: 1px solid var(--line);
+    color: var(--muted); font-size: 14px;
+  }
+  code {
+    background: var(--chip); border-radius: 6px; padding: 2px 6px;
+    font: 14px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <svg class="mark" viewBox="0 0 1024 1024" role="img" aria-label="Doorbell app icon"><rect width="1024" height="1024" fill="#F2654E"/><g fill="none" stroke="#FFCBBB" stroke-width="50" stroke-linecap="round"><path d="M785.3 248 A380 380 0 0 1 785.3 776"/><path d="M238.7 248 A380 380 0 0 0 238.7 776"/></g><circle cx="512" cy="512" r="296" fill="#FFF8F5"/><circle cx="512" cy="512" r="220" fill="#12948B"/><path d="M402 516 L480 596 L624 440" fill="none" stroke="#FFF8F5" stroke-width="64" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  <h1>Support</h1>
+  <p class="lede">Something not ringing? Start here, then write to me.</p>
+  <p class="meta"><a href="index.html">Doorbell</a> &middot; <a href="privacy.html">Privacy</a></p>
+</header>
+
+<div class="card">
+  <p class="q">Email</p>
+  <p class="a"><a href="mailto:ziwaali7@gmail.com">ziwaali7@gmail.com</a> &mdash; one person, usually
+  within a couple of days. Tell me your device, your iOS version, and what you expected to happen.</p>
+</div>
+
+<h2>Frequently asked</h2>
+
+<div class="card">
+  <p class="q">A task was due and nothing happened.</p>
+  <p class="a">Four things, in order of how often they are the cause:</p>
+  <ul>
+    <li><strong>Notification permission.</strong> Settings &rsaquo; Doorbell &rsaquo; Notifications
+        &mdash; Allow Notifications on, and Lock Screen, Notification Centre and Banners all ticked.</li>
+    <li><strong>Focus or Do Not Disturb.</strong> Doorbell marks its due alerts as time-sensitive so
+        they can break through a Focus, but a Focus can still be set to block them. In Settings
+        &rsaquo; Focus &rsaquo; <em>(your focus)</em> &rsaquo; Apps, allow Doorbell, and leave
+        &ldquo;Time Sensitive Notifications&rdquo; on.</li>
+    <li><strong>Silent switch or volume.</strong> The doorbell is a sound; the ring/silent switch
+        and the ringer volume both apply.</li>
+    <li><strong>The task had no due time.</strong> Only tasks with a time on the Day view ring.
+        A task with a date but no time just sits in the list.</li>
+  </ul>
+</div>
+
+<div class="card">
+  <p class="q">The assistant says Apple Intelligence is not available.</p>
+  <p class="a">The on-device assistant uses Apple&rsquo;s Foundation Models, which need iOS&nbsp;26
+  and an Apple&nbsp;Intelligence-capable device, with Apple Intelligence switched on in
+  Settings &rsaquo; Apple Intelligence &amp; Siri. On a device that cannot run it, Doorbell quietly
+  falls back to its own rules-based parser &mdash; that is not an error, and phrases like
+  &ldquo;gym tomorrow at 7&rdquo; or &ldquo;call mum every day at 18:00&rdquo; still work. The more
+  conversational requests are the ones you will miss.</p>
+</div>
+
+<div class="card">
+  <p class="q">How do I connect my own LLM (Ollama)?</p>
+  <p class="a">Run the server on a machine on the same network, then point Doorbell at it:</p>
+  <ul>
+    <li>On the machine running Ollama, make it listen beyond localhost:
+        <code>OLLAMA_HOST=0.0.0.0:11434 ollama serve</code>, and pull a model, e.g.
+        <code>ollama pull llama3.2</code>.</li>
+    <li>Find that machine&rsquo;s address on your network (something like <code>192.168.1.20</code>).</li>
+    <li>In Doorbell: Settings &rsaquo; Assistant &rsaquo; Local server. Enter
+        <code>http://192.168.1.20:11434</code> and the model name, then tap Test.</li>
+    <li>The first time, iOS asks for permission to find devices on your local network. Say yes, or
+        the connection will silently fail.</li>
+  </ul>
+  <p class="a">Anything with an OpenAI-compatible <code>/v1/chat/completions</code> endpoint works
+  the same way. This is the only network connection Doorbell ever makes, and only because you set
+  it up.</p>
+</div>
+
+<div class="card">
+  <p class="q">How do I push a task back?</p>
+  <p class="a">Swipe or long-press the notification and pick <strong>+15 min</strong>, or open the
+  task and use the extend buttons: +5, +15, +30, +60. You can extend before it is due as well as
+  after &mdash; the countdown simply resets and the doorbell will ring again at the new time.</p>
+</div>
+
+<div class="card">
+  <p class="q">The widget or Live Activity is not showing.</p>
+  <p class="a">The <strong>Live Activity</strong> appears on the lock screen and in the Dynamic
+  Island only when you have a task due later today; it disappears once the day&rsquo;s tasks are
+  done. Check Settings &rsaquo; Doorbell &rsaquo; Live Activities is on.</p>
+  <p class="a">The <strong>widget</strong> is added the usual way: long-press the home screen, tap
+  the <strong>+</strong>, search for Doorbell, and drag the size you want. It refreshes when tasks
+  change and on the system&rsquo;s own schedule, so give it a minute after a change.</p>
+</div>
+
+<div class="card">
+  <p class="q">Do my tasks sync between my iPhone and my Mac?</p>
+  <p class="a">No. There is no sync and no cloud, by design &mdash; there is no server to sync
+  through. Each device keeps its own list.</p>
+</div>
+
+<div class="card">
+  <p class="q">How do I delete everything?</p>
+  <p class="a">Delete the app. Everything Doorbell knows lives inside the app on your device, so
+  removing it removes the lot. There is no account to close and no copy held anywhere else.</p>
+</div>
+
+<div class="card">
+  <p class="q">Found a bug, or want something changed?</p>
+  <p class="a">Write to <a href="mailto:ziwaali7@gmail.com">ziwaali7@gmail.com</a>. Steps to
+  reproduce get fixed fastest.</p>
+</div>
+
+<footer>
+  <p><a href="index.html">Doorbell</a> &middot; <a href="privacy.html">Privacy</a></p>
+  <p>&copy; 2026 Ali Ziwa</p>
+</footer>
+
+</div>
+</body>
+</html>

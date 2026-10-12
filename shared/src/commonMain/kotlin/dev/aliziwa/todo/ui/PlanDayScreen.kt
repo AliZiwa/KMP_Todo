@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
@@ -47,6 +48,12 @@ private class QuickRow(val title: String, val timeMinutes: Int?, val priority: P
  * The morning "Plan your day" sheet: shows what is already on today's plate and lets the user
  * quick-add several tasks in one go, each with the shared time picker.
  */
+/**
+ * Below this content width the time field and the priority chips share one wrapping row; above it
+ * the roomier desktop layout is kept exactly as it was.
+ */
+private val NARROW_ROW_BREAKPOINT = 420.dp
+
 @Composable
 fun PlanDayScreen(
     today: LocalDate,
@@ -213,23 +220,45 @@ private fun QuickAddRow(
                 }
             }
         }
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            TimePickerField(
-                minutes = row.timeMinutes,
-                onChange = { onChange(row.title, it, row.priority) },
-                nowMinutes = nowMinutes,
-            )
-            Spacer(Modifier.width(12.dp))
-            FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
-                verticalArrangement = Arrangement.spacedBy(6.dp),
-            ) {
+        // At phone width the big time pill squeezes the priority chips onto three lines, so below
+        // the breakpoint the time field drops to chip scale and shares ONE FlowRow with them.
+        BoxWithConstraints {
+            val narrow = maxWidth < NARROW_ROW_BREAKPOINT
+            val priorityChips: @Composable () -> Unit = {
                 Priority.entries.reversed().forEach { priority ->
                     SelectableChip(
                         text = priority.name.lowercase().replaceFirstChar { it.uppercase() },
                         selected = row.priority == priority,
                         onClick = { onChange(row.title, row.timeMinutes, priority) },
                     )
+                }
+            }
+            if (narrow) {
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    verticalArrangement = Arrangement.spacedBy(6.dp),
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    TimePickerField(
+                        minutes = row.timeMinutes,
+                        onChange = { onChange(row.title, it, row.priority) },
+                        nowMinutes = nowMinutes,
+                        compact = true,
+                    )
+                    priorityChips()
+                }
+            } else {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    TimePickerField(
+                        minutes = row.timeMinutes,
+                        onChange = { onChange(row.title, it, row.priority) },
+                        nowMinutes = nowMinutes,
+                    )
+                    Spacer(Modifier.width(12.dp))
+                    FlowRow(
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                        verticalArrangement = Arrangement.spacedBy(6.dp),
+                    ) { priorityChips() }
                 }
             }
         }

@@ -51,6 +51,7 @@ import androidx.compose.ui.unit.dp
 import dev.aliziwa.todo.assistant.AssistantMode
 import dev.aliziwa.todo.data.AppSettings
 import dev.aliziwa.todo.data.DeletedTask
+import dev.aliziwa.todo.data.LlmBackend
 import dev.aliziwa.todo.domain.Boards
 import dev.aliziwa.todo.domain.DateMath
 import dev.aliziwa.todo.domain.Due
@@ -60,6 +61,7 @@ import dev.aliziwa.todo.domain.TaskScope
 import dev.aliziwa.todo.domain.TaskStatus
 import dev.aliziwa.todo.llm.ModelCatalog
 import dev.aliziwa.todo.platform.DueAlert
+import dev.aliziwa.todo.platform.EngineState
 import dev.aliziwa.todo.ui.AppBottomBar
 import dev.aliziwa.todo.ui.AppNavRail
 import dev.aliziwa.todo.ui.BoardTab
@@ -87,8 +89,11 @@ import kotlinx.coroutines.launch
 /** Below this width the rail becomes a bottom bar, so phones keep working. */
 private const val RAIL_BREAKPOINT_DP = 700
 
-/** Single-user app; the greeting is allowed to be personal. */
-private const val USER_NAME = "Ali"
+/** Horizontal inset of the route content area, inside the reading column. */
+private const val CONTENT_INSET_DP = 12
+
+/** Extra inset the form-style pages (editor, settings, plan sheet) add on top of it. */
+private const val PAGE_INSET_DP = 18
 
 /**
  * Root composable hosted by every platform. [initialRoute] lets platforms deep-link
@@ -183,7 +188,6 @@ fun App(graph: AppGraph, initialRoute: String? = null, darkTheme: Boolean? = nul
         val dueNowCount = todays.count { Due.isRinging(it, nowMillis) }
 
         val route = nav.current
-        val editorOpen = route is Route.Add || route is Route.Task
         val selectedNav: NavTarget? = when (route) {
             Route.Today -> NavTarget.Board(board)
             Route.Chat -> NavTarget.Chat
@@ -234,7 +238,7 @@ fun App(graph: AppGraph, initialRoute: String? = null, darkTheme: Boolean? = nul
                                 Column(Modifier.fillMaxSize()) {
                                     if (route is Route.Today || route is Route.Alert) {
                                         GreetingHeader(
-                                            name = USER_NAME,
+                                            name = settings.userName,
                                             today = today,
                                             hourOfDay = nowMinutes / 60,
                                             done = doneToday,
@@ -255,7 +259,10 @@ fun App(graph: AppGraph, initialRoute: String? = null, darkTheme: Boolean? = nul
                                         )
                                     }
 
-                                    Box(Modifier.weight(1f).fillMaxWidth().padding(horizontal = 12.dp)) {
+                                    Box(
+                                        Modifier.weight(1f).fillMaxWidth()
+                                            .padding(horizontal = CONTENT_INSET_DP.dp),
+                                    ) {
                                         AnimatedContent(
                                             targetState = if (route is Route.Today) {
                                                 "today-${board.name}"
@@ -291,17 +298,12 @@ fun App(graph: AppGraph, initialRoute: String? = null, darkTheme: Boolean? = nul
                                 }
                             }
 
-                            if (route is Route.Today || editorOpen) {
+                            // Boards only. The editor and the plan sheet have their own Cancel /
+                            // Close buttons, and a floating button there just covers the form's
+                            // own controls on a phone.
+                            if (route is Route.Today) {
                                 GradientFab(
-                                    editorOpen = editorOpen,
-                                    onClick = {
-                                        if (editorOpen) {
-                                            graph.assistant.clearManualPrefill()
-                                            if (!nav.back()) nav.reset(Route.Today)
-                                        } else {
-                                            nav.push(Route.Add)
-                                        }
-                                    },
+                                    onClick = { nav.push(Route.Add) },
                                     modifier = Modifier
                                         .align(Alignment.BottomEnd)
                                         .padding(end = 26.dp, bottom = 26.dp),
@@ -359,11 +361,19 @@ fun App(graph: AppGraph, initialRoute: String? = null, darkTheme: Boolean? = nul
     }
 }
 
-/** Compact header for everything that is not a board: back arrow + title. */
+/**
+ * Compact header for everything that is not a board: back arrow + title.
+ *
+ * The leading edge is aligned with the card column underneath it: the content area is inset by
+ * [CONTENT_INSET_DP] and each page adds [PAGE_INSET_DP] of its own, so the arrow's optical left edge
+ * (and the title, when there is no arrow) must start at the sum of the two.
+ */
 @Composable
 private fun PageHeader(title: String, canGoBack: Boolean, onBack: () -> Unit) {
+    // An IconButton is 48dp with a 24dp icon, so the glyph sits 12dp in from the button's edge.
+    val leading = (CONTENT_INSET_DP + PAGE_INSET_DP - 12).dp
     Row(
-        Modifier.fillMaxWidth().padding(start = 6.dp, end = 16.dp, top = 14.dp, bottom = 6.dp),
+        Modifier.fillMaxWidth().padding(start = leading, end = 18.dp, top = 14.dp, bottom = 6.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
@@ -487,6 +497,8 @@ private fun RouteContent(
         }
 
         Route.Chat -> {
+            val builtInModel = graph.platform.localLlmEngine?.builtInModel
+            val chatEngineState = graph.platform.localLlmEngine?.state?.collectAsState()?.value
             val messages by graph.assistant.messages.collectAsState()
             val mode by graph.assistant.mode.collectAsState()
             val busy by graph.assistant.busy.collectAsState()
@@ -502,9 +514,19 @@ private fun RouteContent(
                 onReject = { graph.assistant.reject(it) },
                 onOpenSettings = { nav.push(Route.Settings) },
                 onReenable = { scope.launch { graph.assistant.reenable() } },
-                suggestedModelName = ModelCatalog
-                    .defaultFor(graph.platform.localLlmEngine?.supportedExtensions ?: emptyList())
-                    ?.displayName,
+                // Null on platforms whose engine ships an OS-provided model: there is nothing to
+                // download, so the empty state must never say "download X".
+                suggestedModelName = if (builtInModel != null) {
+                    null
+                } else {
+                    ModelCatalog
+                        .defaultFor(graph.platform.localLlmEngine?.supportedExtensions ?: emptyList())
+                        ?.displayName
+                },
+                builtInModelName = builtInModel?.displayName,
+                builtInModelFailed = builtInModel != null &&
+                    settings.llmBackend == LlmBackend.LOCAL_ENGINE &&
+                    chatEngineState is EngineState.Error,
             )
         }
 
@@ -522,6 +544,10 @@ private fun RouteContent(
                 downloadState = downloadState,
                 testResult = testResult,
                 assistantInManualFallback = mode == AssistantMode.MANUAL_FALLBACK,
+                builtInModel = engine?.builtInModel,
+                appVersion = graph.platform.capabilities.appVersion,
+                platformName = graph.platform.capabilities.platformName,
+                supportsLaunchAtLogin = graph.platform.capabilities.supportsLaunchAtLogin,
                 onUpdate = { transform -> scope.launch { applySettings(graph, transform) } },
                 onDownload = { url, fileName ->
                     graph.modelDownloader.start(
@@ -586,7 +612,7 @@ private fun draftOf(item: TaskItem, zone: kotlinx.datetime.TimeZone): TaskDraft 
 )
 
 private fun titleFor(route: Route): String = when (route) {
-    Route.Today -> "Personal Todo"
+    Route.Today -> APP_DISPLAY_NAME
     Route.Add -> "New task"
     // The plan sheet carries its own big title card, so the page header is just the back arrow.
     Route.Plan -> ""

@@ -26,6 +26,12 @@ class DesktopCapabilities(
 
     override val platformName: String = "macOS"
 
+    /** Only macOS installs a LaunchAgent, so only macOS shows the Settings toggle. */
+    override val supportsLaunchAtLogin: Boolean = true
+
+    /** jpackage sets `jpackage.app-version` in the packaged .app; empty under `:desktopApp:run`. */
+    override val appVersion: String = System.getProperty("jpackage.app-version").orEmpty()
+
     override suspend fun setLaunchAtLogin(enabled: Boolean): Boolean = withContext(Dispatchers.IO) {
         runCatching { if (enabled) installAgent() else removeAgent() }
             .onFailure { DesktopLog.e(TAG, "setLaunchAtLogin($enabled) failed", it) }

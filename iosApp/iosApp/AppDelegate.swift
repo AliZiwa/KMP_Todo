@@ -34,8 +34,36 @@ final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCent
         }
 
         registerBackgroundTasks()
+        applyDebugLaunchFlags()
         scheduleDebugAlarmIfRequested()
         return true
+    }
+
+    /// Screenshot / demo hooks:
+    ///   xcrun simctl launch booted dev.aliziwa.todo -todoDebugSeedDemo 1 -todoDebugRoute chat
+    private func applyDebugLaunchFlags() {
+        #if DEBUG
+        if UserDefaults.standard.bool(forKey: "todoDebugSeedDemo"), let graph = Bootstrap.shared.graph {
+            DemoDataKt.seedDemoDataAsync(graph: graph) {
+                NSLog("[todo] demo data seeded")
+            }
+        }
+
+        // -todoDebugAssistantPrompt "dentist friday at 3pm" exercises the assistant without a
+        // keyboard. Waits for the engine to report ready-ish before sending.
+        if let prompt = UserDefaults.standard.string(forKey: "todoDebugAssistantPrompt"), !prompt.isEmpty {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
+                NSLog("[todo] debug assistant prompt: \(prompt)")
+                TodoActions.shared.sendAssistantMessage(text: prompt)
+            }
+        }
+
+        // `today`, `chat`, `settings`, `plan`, `add`, or any shared route (`task/<id>`).
+        if let route = UserDefaults.standard.string(forKey: "todoDebugRoute"), !route.isEmpty {
+            NSLog("[todo] debug route \(route)")
+            AppRouter.shared.open(route: route)
+        }
+        #endif
     }
 
     /// Dev-only hook used to verify the alarm path end to end without a UI:

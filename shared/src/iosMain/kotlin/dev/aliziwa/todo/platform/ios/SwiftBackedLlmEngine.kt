@@ -1,5 +1,6 @@
 package dev.aliziwa.todo.platform.ios
 
+import dev.aliziwa.todo.platform.BuiltInModel
 import dev.aliziwa.todo.platform.EngineState
 import dev.aliziwa.todo.platform.GenerationOptions
 import dev.aliziwa.todo.platform.LlmMessage
@@ -27,10 +28,16 @@ data class NativeLlmRequest(
     val jsonMode: Boolean,
     val stopSequences: List<String>,
     val timeoutMillis: Long,
+    /**
+     * JSON Schema for the expected answer (`GenerationOptions.jsonSchema`), non-null only when
+     * [jsonMode] is true. Engines with schema-constrained decoding (Apple Foundation Models'
+     * guided generation) should use it; others may ignore it.
+     */
+    val jsonSchema: String?,
 )
 
 /**
- * Implemented in Swift (`LlamaCppEngine`) and wrapped by [SwiftBackedLlmEngine].
+ * Implemented in Swift (`AppleFoundationModelEngine`) and wrapped by [SwiftBackedLlmEngine].
  *
  * Contract:
  *  - Nothing here blocks the caller; all work happens on the implementation's own queue.
@@ -39,19 +46,30 @@ data class NativeLlmRequest(
  *    error message, `null` means success.
  */
 interface NativeLlmBridge {
-    /** e.g. `["gguf"]`. */
+    /** e.g. `["gguf"]`. EMPTY for a built-in engine, which loads no file. */
     fun supportedFileExtensions(): List<String>
 
     /** Human-readable model name once loaded (file name is a fine default). */
     fun modelDisplayName(): String?
+
+    /**
+     * Non-null id when the engine is backed by an OS-provided model (Apple Intelligence), null
+     * for file-based engines. Together with [builtInModelDisplayName] it fills
+     * [LocalLlmEngine.builtInModel]; split into two plain strings so Swift never has to build a
+     * Kotlin data class.
+     */
+    fun builtInModelId(): String?
+
+    fun builtInModelDisplayName(): String?
 
     fun loadModel(path: String, completion: (String?) -> Unit)
 
     fun unloadModel()
 
     /**
-     * Applies the model's chat template (llama.cpp `llama_chat_apply_template`), then streams
-     * decoded text through [onToken] and calls [onFinished] once.
+     * Formats the conversation for the native model, then streams decoded text through [onToken]
+     * and calls [onFinished] exactly once. For schema-constrained generation the whole JSON object
+     * may arrive as a single [onToken] chunk at the end — the shared layer concatenates chunks.
      */
     fun startGeneration(
         request: NativeLlmRequest,
@@ -66,22 +84,30 @@ interface NativeLlmBridge {
  * Adapts a Swift [NativeLlmBridge] to the shared [LocalLlmEngine] port: owns the
  * [EngineState] machine and turns the native streaming callbacks into a Kotlin [Flow].
  *
- * Swift: `SwiftBackedLlmEngine(bridge: LlamaCppEngine())`.
+ * Swift: `SwiftBackedLlmEngine(bridge: AppleFoundationModelEngine())`.
  */
 class SwiftBackedLlmEngine(private val bridge: NativeLlmBridge) : LocalLlmEngine {
 
     private val _state = MutableStateFlow<EngineState>(EngineState.NotLoaded)
     override val state: StateFlow<EngineState> = _state.asStateFlow()
 
+    override val builtInModel: BuiltInModel? =
+        bridge.builtInModelId()?.let { id ->
+            BuiltInModel(id = id, displayName = bridge.builtInModelDisplayName() ?: id)
+        }
+
+    /** A built-in engine loads no file, so it advertises no extensions and nothing downloadable. */
     override val supportedExtensions: List<String>
-        get() = bridge.supportedFileExtensions()
+        get() = if (builtInModel != null) emptyList() else bridge.supportedFileExtensions()
 
     override suspend fun load(modelPath: String): Result<Unit> {
         _state.value = EngineState.Loading(null)
         return suspendCancellableCoroutine { cont ->
             bridge.loadModel(modelPath) { error ->
                 if (error == null) {
-                    val name = bridge.modelDisplayName() ?: modelPath.substringAfterLast('/')
+                    val name = bridge.modelDisplayName()
+                        ?: builtInModel?.displayName
+                        ?: modelPath.substringAfterLast('/')
                     _state.value = EngineState.Ready(modelPath, name)
                     if (cont.isActive) cont.resume(Result.success(Unit))
                 } else {
@@ -108,6 +134,7 @@ class SwiftBackedLlmEngine(private val bridge: NativeLlmBridge) : LocalLlmEngine
                 jsonMode = options.jsonMode,
                 stopSequences = options.stopSequences,
                 timeoutMillis = options.timeoutMillis,
+                jsonSchema = options.jsonSchema,
             )
             bridge.startGeneration(
                 request = request,

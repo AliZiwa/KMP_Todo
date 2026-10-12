@@ -55,6 +55,13 @@ class TaskActions(
  * in as [tab]; each board keeps its own date anchor so stepping through weeks does not reset the
  * day you were looking at.
  */
+/**
+ * Bottom breathing room on every board list: the [dev.aliziwa.todo.ui.GradientFab] floats over the
+ * bottom-right corner (62dp + 26dp inset), and on a phone it would otherwise sit on top of the last
+ * row's overflow button.
+ */
+private val FAB_CLEARANCE = 96.dp
+
 @Composable
 fun TodayScreen(
     snapshot: TaskSnapshot,
@@ -134,7 +141,7 @@ private fun DayTab(
             return@Column
         }
         LazyColumn(
-            contentPadding = PaddingValues(horizontal = 4.dp, vertical = 4.dp),
+            contentPadding = PaddingValues(start = 4.dp, top = 4.dp, end = 4.dp, bottom = FAB_CLEARANCE),
             verticalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.fillMaxSize(),
         ) {
@@ -154,7 +161,6 @@ private fun DayTab(
                     Row(item, nowMillis, zone, actions, Modifier.animateItem(placementSpec = Motion.bouncyOffset))
                 }
             }
-            item("tail") { Spacer(Modifier.size(96.dp)) }
         }
     }
 }
@@ -180,13 +186,12 @@ private fun RangeTab(
             return@Column
         }
         LazyColumn(
-            contentPadding = PaddingValues(horizontal = 4.dp, vertical = 4.dp),
+            contentPadding = PaddingValues(start = 4.dp, top = 4.dp, end = 4.dp, bottom = FAB_CLEARANCE),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             items(items, key = { it.key }) { item ->
                 Row(item, nowMillis, zone, actions, Modifier.animateItem(placementSpec = Motion.bouncyOffset))
             }
-            item("tail") { Spacer(Modifier.size(96.dp)) }
         }
     }
 }
@@ -218,7 +223,7 @@ private fun RecurringTab(
         }
         val done = items.count { it.status == TaskStatus.DONE }
         LazyColumn(
-            contentPadding = PaddingValues(horizontal = 4.dp, vertical = 4.dp),
+            contentPadding = PaddingValues(start = 4.dp, top = 4.dp, end = 4.dp, bottom = FAB_CLEARANCE),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             item("progress") {
@@ -229,7 +234,6 @@ private fun RecurringTab(
             items(items, key = { it.key }) { item ->
                 Row(item, nowMillis, zone, actions, Modifier.animateItem(placementSpec = Motion.bouncyOffset))
             }
-            item("tail") { Spacer(Modifier.size(96.dp)) }
         }
     }
 }

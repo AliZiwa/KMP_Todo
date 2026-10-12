@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Doorbell — a to-do list that rings</title>
+<meta name="color-scheme" content="light dark">
+<style>
+  :root {
+    --bg: #FFF8F5; --card: #FFFFFF; --ink: #2B1A16; --muted: #6D544D;
+    --coral: #F2654E; --teal: #12948B; --line: #F0DBD2; --chip: #FFEDE5;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1A1211; --card: #261B1A; --ink: #F2DFD9; --muted: #C3ABA4;
+      --coral: #FFB4A3; --teal: #7FD7CD; --line: #3A2B28; --chip: #2E2220;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; padding: 0 20px 72px;
+    background: var(--bg); color: var(--ink);
+    font: 17px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  .wrap { max-width: 680px; margin: 0 auto; }
+  header { padding: 48px 0 8px; }
+  .mark { display: block; width: 76px; height: 76px; border-radius: 20px; }
+  h1 { font-size: 34px; line-height: 1.15; letter-spacing: -0.02em; margin: 22px 0 6px; }
+  h2 { font-size: 21px; letter-spacing: -0.01em; margin: 38px 0 10px; }
+  h3 { font-size: 17px; margin: 26px 0 6px; }
+  p, li { color: var(--ink); }
+  .lede { font-size: 19px; color: var(--muted); margin: 0 0 8px; }
+  .meta { color: var(--muted); font-size: 14px; margin: 4px 0 0; }
+  a { color: var(--coral); text-underline-offset: 3px; }
+  ul { padding-left: 22px; }
+  li { margin: 6px 0; }
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 20px;
+    padding: 20px 22px; margin: 18px 0;
+  }
+  .card h3:first-child, .card h2:first-child { margin-top: 0; }
+  .chip {
+    display: inline-block; background: var(--chip); color: var(--muted);
+    border-radius: 999px; padding: 5px 13px; font-size: 13px; margin: 0 6px 6px 0;
+  }
+  .q { font-weight: 600; margin: 0 0 4px; }
+  .a { margin: 0; color: var(--muted); }
+  nav.top { margin: 26px 0 0; }
+  nav.top a { margin-right: 18px; font-size: 15px; }
+  footer {
+    margin-top: 48px; padding-top: 22px; border-top: 1px solid var(--line);
+    color: var(--muted); font-size: 14px;
+  }
+  code {
+    background: var(--chip); border-radius: 6px; padding: 2px 6px;
+    font: 14px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <svg class="mark" viewBox="0 0 1024 1024" role="img" aria-label="Doorbell app icon"><rect width="1024" height="1024" fill="#F2654E"/><g fill="none" stroke="#FFCBBB" stroke-width="50" stroke-linecap="round"><path d="M785.3 248 A380 380 0 0 1 785.3 776"/><path d="M238.7 248 A380 380 0 0 0 238.7 776"/></g><circle cx="512" cy="512" r="296" fill="#FFF8F5"/><circle cx="512" cy="512" r="220" fill="#12948B"/><path d="M402 516 L480 596 L624 440" fill="none" stroke="#FFF8F5" stroke-width="64" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  <h1>Doorbell</h1>
+  <p class="lede">A to-do list that rings when the task is actually due.</p>
+  <nav class="top"><a href="privacy.html">Privacy</a><a href="support.html">Support</a></nav>
+</header>
+
+<div class="card">
+  <p>Most to-do apps show you a list and hope you look at it. Doorbell waits for the minute a task
+  is due and then rings a doorbell &mdash; on the lock screen, in the Dynamic Island, and as a
+  notification you can answer without opening the app.</p>
+  <p>Mark it done, push it back by fifteen minutes, dismiss it or delete it, straight from the alert.</p>
+</div>
+
+<h2>What it does</h2>
+<ul>
+  <li>Day, Week, Month and Recurring views, ranked by priority then by due time</li>
+  <li>A live countdown on everything due today</li>
+  <li>Extend by +5, +15, +30 or +60 minutes when life gets in the way</li>
+  <li>A daily &ldquo;plan your day&rdquo; prompt</li>
+  <li>A home-screen widget and a Live Activity for whatever is next</li>
+  <li>An assistant you can talk to in plain English: <em>&ldquo;gym tomorrow at 7&rdquo;</em>,
+      <em>&ldquo;call mum every day at 18:00&rdquo;</em>, <em>&ldquo;done with laundry&rdquo;</em></li>
+</ul>
+
+<h2>Where the thinking happens</h2>
+<p>On iPhone and iPad the assistant runs on Apple Intelligence &mdash; Apple&rsquo;s on-device
+Foundation Models &mdash; so what you type never leaves the device. That needs iOS&nbsp;26 and an
+Apple&nbsp;Intelligence-capable device. Without it, a built-in rules parser understands the same
+phrasings, offline. There is also a Mac version, built from the same code.</p>
+
+<h2>Privacy, in one line</h2>
+<p>No account, no analytics, no advertising, no tracking, and no server to send anything to. Your
+tasks live in a database on your device. <a href="privacy.html">The full policy</a> is short.</p>
+
+<p>
+  <span class="chip">No account</span>
+  <span class="chip">No tracking</span>
+  <span class="chip">Works offline</span>
+  <span class="chip">Free</span>
+</p>
+
+<footer>
+  <p>Doorbell is made by Ali Ziwa. Questions: <a href="mailto:ziwaali7@gmail.com">ziwaali7@gmail.com</a></p>
+  <p>&copy; 2026 Ali Ziwa</p>
+</footer>
+
+</div>
+</body>
+</html>

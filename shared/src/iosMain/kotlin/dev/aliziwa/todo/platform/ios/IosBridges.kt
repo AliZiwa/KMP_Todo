@@ -91,6 +91,15 @@ object TodoActions {
         TodoApp.deleteTask(taskId)
     }
 
+    /**
+     * Sends one message to the assistant exactly as typing it in the chat would.
+     * Used by the `-todoDebugAssistantPrompt` launch hook to exercise Apple Intelligence in a
+     * headless simulator (no keyboard) and to fill the chat screenshot.
+     */
+    fun sendAssistantMessage(text: String) {
+        TodoApp.graph().assistant.send(text)
+    }
+
     private fun run(completion: (() -> Unit)?, body: suspend () -> Unit) {
         scope.launch {
             try {

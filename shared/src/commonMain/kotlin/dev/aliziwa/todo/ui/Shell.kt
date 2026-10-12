@@ -299,10 +299,11 @@ private fun BottomItem(
     }
 }
 
-/** "Good morning, Ali" + today's date + a progress ring for today. */
+/** "Good morning, Sam" (or just "Good morning") + today's date + a progress ring for today. */
 @Composable
 fun GreetingHeader(
-    name: String,
+    /** Null or blank when the user has not set a name: the greeting then stands on its own. */
+    name: String?,
     today: LocalDate,
     hourOfDay: Int,
     done: Int,
@@ -325,7 +326,7 @@ fun GreetingHeader(
         ) {
             Column(Modifier.weight(1f)) {
                 Text(
-                    "${greetingFor(hourOfDay)}, $name",
+                    greetingLine(hourOfDay, name),
                     style = MaterialTheme.typography.headlineMedium,
                     color = MaterialTheme.colorScheme.onSurface,
                 )
@@ -360,6 +361,13 @@ fun GreetingHeader(
     }
 }
 
+/** "Good morning, Sam" with a name; plain "Good morning" without one — never a dangling comma. */
+internal fun greetingLine(hourOfDay: Int, name: String?): String {
+    val greeting = greetingFor(hourOfDay)
+    val trimmed = name?.trim()
+    return if (trimmed.isNullOrEmpty()) greeting else "$greeting, $trimmed"
+}
+
 internal fun greetingFor(hourOfDay: Int): String = when (hourOfDay) {
     in 0..4 -> "Still up"
     in 5..11 -> "Good morning"
@@ -376,12 +384,16 @@ fun ContentColumn(modifier: Modifier = Modifier, maxWidth: Int = 760, content: @
     }
 }
 
-/** The plus that rotates into an X while the editor is open. */
+/**
+ * The "add a task" button. Only ever shown over a board — the editor and plan sheet carry their own
+ * buttons, so [editorOpen] (which rotates the plus into an X) is now only for callers that still
+ * float it over a form.
+ */
 @Composable
 fun GradientFab(
-    editorOpen: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    editorOpen: Boolean = false,
 ) {
     val palette = LocalTodoPalette.current
     val interaction = remember { MutableInteractionSource() }

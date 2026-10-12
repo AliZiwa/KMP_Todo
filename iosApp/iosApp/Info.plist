@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>Personal Todo</string>
+	<string>Doorbell</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -20,13 +20,31 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.productivity</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<!-- Colour-only launch screen (plus the bell glyph); UIRequiresFullScreen is deprecated
+	     on iPadOS 26 and deliberately not set. -->
 	<key>UILaunchScreen</key>
-	<dict/>
+	<dict>
+		<key>UIColorName</key>
+		<string>LaunchBackground</string>
+		<key>UIImageName</key>
+		<string>LaunchIcon</string>
+		<key>UIImageRespectsSafeAreaInsets</key>
+		<true/>
+	</dict>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
@@ -35,6 +53,9 @@
 		<string>arm64</string>
 	</array>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
+	<!-- Compose Multiplatform refuses to start without this: it unlocks ProMotion's 120 Hz. -->
+	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<!-- Live Activity (lock screen / Dynamic Island) support -->
 	<key>NSSupportsLiveActivities</key>
@@ -54,7 +75,10 @@
 	</array>
 	<!-- Notifications are the only way an alarm can reach the user when the app is not running. -->
 	<key>NSUserNotificationsUsageDescription</key>
-	<string>Personal Todo uses notifications to ring a doorbell when a task becomes due and to ask you to plan your day each morning.</string>
+	<string>Doorbell uses notifications to ring a doorbell when a task becomes due and to ask you to plan your day each morning.</string>
+	<!-- Only reached if the user points the assistant at their own LLM server in Settings. -->
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Doorbell only talks to a local LLM server if you add one in Settings, e.g. Ollama on your Mac.</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 </dict>

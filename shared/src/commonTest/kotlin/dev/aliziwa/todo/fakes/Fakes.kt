@@ -1,6 +1,9 @@
 package dev.aliziwa.todo.fakes
 
+import dev.aliziwa.todo.db.SettingEntity
+import dev.aliziwa.todo.db.SettingsDao
 import dev.aliziwa.todo.platform.AlarmScheduler
+import dev.aliziwa.todo.platform.BuiltInModel
 import dev.aliziwa.todo.platform.EngineState
 import dev.aliziwa.todo.platform.GenerationOptions
 import dev.aliziwa.todo.platform.LlmMessage
@@ -115,7 +118,11 @@ class FakeHttp : HttpEngineProvider {
     override fun createHttpClient(): HttpClient = HttpClient()
 }
 
-class FakeCapabilities(override val platformName: String = "test") : PlatformCapabilities {
+class FakeCapabilities(
+    override val platformName: String = "test",
+    override val appVersion: String = "",
+    override val supportsLaunchAtLogin: Boolean = false,
+) : PlatformCapabilities {
     val openedUrls = mutableListOf<String>()
     var launchAtLogin = false
 
@@ -138,6 +145,7 @@ class TestPlatform(
     val alertsFake: RecordingAlertPresenter = RecordingAlertPresenter(),
     val soundFake: RecordingSoundPlayer = RecordingSoundPlayer(),
     val capabilitiesFake: FakeCapabilities = FakeCapabilities(),
+    val engineFake: LocalLlmEngine? = null,
 ) {
     val services: PlatformServices = PlatformServices(
         alarms = alarmsFake,
@@ -147,8 +155,34 @@ class TestPlatform(
         clock = clockFake,
         http = FakeHttp(),
         capabilities = capabilitiesFake,
-        localLlmEngine = null,
+        localLlmEngine = engineFake,
     )
+}
+
+/** In-memory [SettingsDao]; enough to exercise the settings repository without Room. */
+class FakeSettingsDao(initial: Map<String, String> = emptyMap()) : SettingsDao {
+    val rows = initial.toMutableMap()
+    private val flow = MutableStateFlow(rows.map { SettingEntity(it.key, it.value) })
+
+    override suspend fun put(entity: SettingEntity) {
+        rows[entity.settingKey] = entity.settingValue
+        emit()
+    }
+
+    override fun observeAll(): Flow<List<SettingEntity>> = flow
+
+    override suspend fun all(): List<SettingEntity> = rows.map { SettingEntity(it.key, it.value) }
+
+    override suspend fun get(key: String): String? = rows[key]
+
+    override suspend fun remove(key: String) {
+        rows.remove(key)
+        emit()
+    }
+
+    private fun emit() {
+        flow.value = rows.map { SettingEntity(it.key, it.value) }
+    }
 }
 
 /** Implements ONLY the original 2-arg [AlarmScheduler.schedule]; proves the 3-arg default bridges. */
@@ -176,6 +210,8 @@ class FakeLocalLlmEngine(
     private val reply: String = "hello",
     private val failLoadWith: String? = null,
     override val supportedExtensions: List<String> = listOf("gguf"),
+    /** Set to mimic an OS-provided model (Apple Intelligence) that needs no file. */
+    override val builtInModel: BuiltInModel? = null,
 ) : LocalLlmEngine {
     private val _state = MutableStateFlow<EngineState>(EngineState.NotLoaded)
     override val state: StateFlow<EngineState> = _state

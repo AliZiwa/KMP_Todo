@@ -16,5 +16,3 @@ models/
 *.gguf
 *.litertlm
 *.task
-iosApp/Vendor/llama.xcframework/
-iosApp/Vendor/llama.cpp/

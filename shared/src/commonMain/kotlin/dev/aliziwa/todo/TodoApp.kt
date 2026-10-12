@@ -101,6 +101,15 @@ object TodoApp {
         val db = databaseBuilder.buildTodoDatabase()
         val created = AppGraph(platform, db)
         graph = created
+        // Platforms with an OS-provided model (Apple Intelligence) default to the on-device
+        // assistant on first run; everyone else stays rules-only until a model is chosen.
+        val hasBuiltInModel = platform.localLlmEngine?.builtInModel != null
+        if (hasBuiltInModel) {
+            created.appScope.launch {
+                runCatching { created.settingsRepository.applyFirstRunDefaults(true) }
+                    .onFailure { Log.w(TAG, "first-run defaults failed", it) }
+            }
+        }
         created.dueEngine.start()
         Log.i(TAG, "started on ${platform.capabilities.platformName}")
         return created
