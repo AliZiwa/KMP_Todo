@@ -11,4 +11,4 @@ object AppLinks {
 }
 
 /** Store/product name, shown in Settings → About. */
-const val APP_DISPLAY_NAME = "Doorbell"
+const val APP_DISPLAY_NAME = "Jukiza-Reminder"

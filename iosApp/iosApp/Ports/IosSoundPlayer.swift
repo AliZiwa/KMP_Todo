@@ -8,7 +8,7 @@ import Shared
 final class IosSoundPlayer: NSObject, Shared.SoundPlayer {
 
     private var player: AVAudioPlayer?
-    private let queue = DispatchQueue(label: "dev.aliziwa.todo.sound")
+    private let queue = DispatchQueue(label: "dev.aliziwa.jukizareminder.sound")
 
     func playDoorbell(loop: Bool) {
         queue.async { [weak self] in

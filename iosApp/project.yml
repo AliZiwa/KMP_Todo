@@ -48,8 +48,8 @@ targets:
         codeSign: true
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: dev.aliziwa.todo
-        PRODUCT_NAME: Doorbell
+        PRODUCT_BUNDLE_IDENTIFIER: dev.aliziwa.jukizareminder
+        PRODUCT_NAME: Jukiza-Reminder
         INFOPLIST_FILE: iosApp/Info.plist
         CODE_SIGN_ENTITLEMENTS: iosApp/iosApp.entitlements
         CURRENT_PROJECT_VERSION: "1"
@@ -92,7 +92,7 @@ targets:
       - path: SharedSwift
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: dev.aliziwa.todo.TodoWidgets
+        PRODUCT_BUNDLE_IDENTIFIER: dev.aliziwa.jukizareminder.TodoWidgets
         PRODUCT_NAME: TodoWidgets
         INFOPLIST_FILE: TodoWidgets/Info.plist
         CODE_SIGN_ENTITLEMENTS: TodoWidgets/TodoWidgets.entitlements

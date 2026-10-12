@@ -1,4 +1,4 @@
-# Doorbell — App Store listing copy (v1.0)
+# Jukiza-Reminder — App Store listing copy (v1.0)
 
 Paste these verbatim into App Store Connect. Character counts are Apple's limits; the count in
 brackets is the current text's length.
@@ -7,7 +7,7 @@ brackets is the current text's length.
 
 ## App name (30 max)
 ```
-Doorbell
+Jukiza-Reminder
 ```
 [8]
 
@@ -19,15 +19,15 @@ A to-do list that rings
 
 ## Promotional text (170 max — editable without a new build)
 ```
-Set a time and Doorbell rings when the task is due. Day, week and month views, live countdowns, and an assistant that turns "gym tomorrow at 7" into a task, on device.
+Set a time and Jukiza-Reminder rings when the task is due. Day, week and month views, live countdowns, and an assistant that turns "gym tomorrow at 7" into a task, on device.
 ```
 [167]
 
 ## Description (4000 max)
 ```
-Doorbell rings when your task is due.
+Jukiza-Reminder rings when your task is due.
 
-Most to-do apps show you a list and hope you look at it. Doorbell waits for the moment a task is actually due, then rings a doorbell — on the lock screen, in the Dynamic Island, and as a notification you can act on without opening the app. Mark it Done, push it back by 15 minutes, dismiss it or delete it, straight from the alert.
+Most to-do apps show you a list and hope you look at it. Jukiza-Reminder waits for the moment a task is actually due, then rings a doorbell — on the lock screen, in the Dynamic Island, and as a notification you can act on without opening the app. Mark it Done, push it back by 15 minutes, dismiss it or delete it, straight from the alert.
 
 YOUR DAY, RANKED
 
@@ -41,14 +41,14 @@ YOUR DAY, RANKED
 
 JUST SAY IT
 
-Type the way you talk and Doorbell works out the rest:
+Type the way you talk and Jukiza-Reminder works out the rest:
 
 "gym tomorrow at 7"
 "call mum every day at 18:00"
 "dentist friday 10am, high priority"
 "done with laundry"
 
-On iPhone this runs on Apple Intelligence — Apple's on-device Foundation Models — so what you type never leaves your phone. It needs iOS 26 and an Apple Intelligence-capable device. On any other device a built-in rules parser understands the same phrasings, completely offline. If you run your own language model at home, you can point Doorbell at it instead (Ollama, or any OpenAI-compatible server on your network). That is optional, you configure it yourself, and it is the only network connection Doorbell ever makes.
+On iPhone this runs on Apple Intelligence — Apple's on-device Foundation Models — so what you type never leaves your phone. It needs iOS 26 and an Apple Intelligence-capable device. On any other device a built-in rules parser understands the same phrasings, completely offline. If you run your own language model at home, you can point Jukiza-Reminder at it instead (Ollama, or any OpenAI-compatible server on your network). That is optional, you configure it yourself, and it is the only network connection Jukiza-Reminder ever makes.
 
 PRIVATE BECAUSE THERE IS NOWHERE TO SEND IT
 
@@ -59,7 +59,7 @@ PRIVATE BECAUSE THERE IS NOWHERE TO SEND IT
 
 There is a Mac version too, built from the same code.
 
-Doorbell is one person's app, made because nothing else would reliably shout at the right minute. If something is wrong, write to ziwaali7@gmail.com and a human answers.
+Jukiza-Reminder is one person's app, made because nothing else would reliably shout at the right minute. If something is wrong, write to ziwaali7@gmail.com and a human answers.
 ```
 [~1750]
 
@@ -75,9 +75,9 @@ reminder,alarm,task,due,countdown,timer,offline,private,widget,checklist,planner
 
 **Use this one (fits):**
 ```
-reminder,alarm,task,due,countdown,offline,private,widget,checklist,planner,recurring,daily,agenda
+alarm,task,due,countdown,timer,offline,private,widget,checklist,planner,recurring,daily,agenda
 ```
-[97]
+[94] — "reminder" dropped because it is now part of the app name
 
 ## Category
 - Primary: **Productivity**
@@ -122,7 +122,7 @@ All territories. No pre-order.
 ## App Review notes (paste into "Notes" on the version page)
 
 ```
-Thanks for reviewing Doorbell.
+Thanks for reviewing Jukiza-Reminder.
 
 NO LOGIN REQUIRED
 There is no account, no sign-in and no demo credentials. Everything is available on first launch.
@@ -160,7 +160,7 @@ Privacy answers are "Data Not Collected".
 PERMISSIONS USED
 - Notifications (the whole point of the app)
 - Time Sensitive Notifications entitlement (the due alert must break through Focus)
-- App Group group.dev.aliziwa.todo (widget reads the next task)
+- App Group group.dev.aliziwa.jukizareminder (widget reads the next task)
 - Background App Refresh / Processing (re-arms alarms after the system suspends the app)
 
 Contact: ziwaali7@gmail.com

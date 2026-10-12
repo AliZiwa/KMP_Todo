@@ -6,7 +6,7 @@ shared/       KMP library (android, jvm, iosArm64, iosSimulatorArm64). Compose U
 androidApp/   Android app: foreground service (sticky notification), AlarmManager alarms, full-screen due alerts, LiteRT-LM engine.
 desktopApp/   macOS Compose Desktop app: menu-bar Tray, always-on-top alert window, LaunchAgent (launch at login), llama.cpp (java-llama.cpp) engine, Ollama connection.
 iosApp/       Xcode project (generated with xcodegen) hosting ComposeUIViewController; UNUserNotifications, Live Activity, Apple Foundation
-              Models (on-device, iOS 26+) as the LLM engine. Ships on the App Store as "Doorbell" (see docs/APP_STORE.md).
+              Models (on-device, iOS 26+) as the LLM engine. Ships on the App Store as "Jukiza-Reminder" (see docs/APP_STORE.md).
 ```
 Toolchain: Kotlin 2.4.21, Compose MP 1.12.1, AGP 9.4.1 (`com.android.kotlin.multiplatform.library` for shared), KSP 2.3.12,
 Room 2.8.5 (bundled SQLite on all platforms), Koog 1.3.0, Gradle 9.8.1, JDK 21.

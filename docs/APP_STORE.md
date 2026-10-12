@@ -1,6 +1,6 @@
-# Shipping Doorbell to the App Store
+# Shipping Jukiza-Reminder to the App Store
 
-Everything needed to get build 1 of **Doorbell** (`dev.aliziwa.todo`, team `487Q4488BH`) from this
+Everything needed to get build 1 of **Jukiza-Reminder** (`dev.aliziwa.jukizareminder`, team `487Q4488BH`) from this
 Mac into App Store review, in order. Tick as you go.
 
 Source material:
@@ -55,7 +55,7 @@ readable once Pages is on — that is fine (they contain no secrets), but check 
       Profiles" has been run at least once.
 - [ ] `iosApp/project.yml` already carries `DEVELOPMENT_TEAM: 487Q4488BH` and
       `CODE_SIGN_STYLE: Automatic`. Re-run `cd iosApp && xcodegen generate` after any change to it.
-- [ ] Open `iosApp/iosApp.xcodeproj` once and confirm both targets (`iosApp` → product **Doorbell**,
+- [ ] Open `iosApp/iosApp.xcodeproj` once and confirm both targets (`iosApp` → product **Jukiza-Reminder**,
       and `TodoWidgets`) show "Automatically manage signing" with no red text.
 
 ### App ID capabilities
@@ -65,11 +65,11 @@ signing will create them on first device build — but check the capabilities ar
 
 | Identifier | Capabilities |
 |---|---|
-| `dev.aliziwa.todo` | App Groups (`group.dev.aliziwa.todo`), Time Sensitive Notifications, Push Notifications *(only if you ever add remote push — not needed today)* |
-| `dev.aliziwa.todo.TodoWidgets` | App Groups (`group.dev.aliziwa.todo`) |
+| `dev.aliziwa.jukizareminder` | App Groups (`group.dev.aliziwa.jukizareminder`), Time Sensitive Notifications, Push Notifications *(only if you ever add remote push — not needed today)* |
+| `dev.aliziwa.jukizareminder.TodoWidgets` | App Groups (`group.dev.aliziwa.jukizareminder`) |
 
-- [ ] App Group `group.dev.aliziwa.todo` exists and is assigned to **both** identifiers.
-- [ ] Time Sensitive Notifications ticked on `dev.aliziwa.todo` (it is in
+- [ ] App Group `group.dev.aliziwa.jukizareminder` exists and is assigned to **both** identifiers.
+- [ ] Time Sensitive Notifications ticked on `dev.aliziwa.jukizareminder` (it is in
       `iosApp/iosApp/iosApp.entitlements` and the build will fail to sign without it).
 - **Live Activities need no capability and no entitlement** — `NSSupportsLiveActivities` in
   `Info.plist` is the whole requirement, and it is already there.
@@ -83,9 +83,9 @@ App Store Connect › My Apps › **+** › New App.
 | Field | Value |
 |---|---|
 | Platforms | iOS |
-| Name | **Doorbell** |
+| Name | **Jukiza-Reminder** |
 | Primary language | **English (U.S.)** |
-| Bundle ID | `dev.aliziwa.todo` |
+| Bundle ID | `dev.aliziwa.jukizareminder` |
 | SKU | `DOORBELL-IOS-001` |
 | User Access | Full Access |
 
@@ -93,8 +93,8 @@ Note on the language: pick **English (U.S.)**, not U.K. It is the default storef
 avoids a second localisation later. The listing copy in `store/listing.md` is written to read
 naturally in both — it avoids "-ise/-ize" words entirely.
 
-If the name **Doorbell** is already reserved by someone else, App Store Connect will say so here.
-Fallbacks in order of preference: *Doorbell — Tasks That Ring*, *Doorbell Tasks*, *Ring My Task*.
+If the name **Jukiza-Reminder** is already reserved (unlikely for a coined name), App Store Connect will say so here;
+pick a suffix such as *Jukiza-Reminder: Tasks That Ring*.
 A changed name means changing the title in `store/listing.md`, the keyword list (the name's words
 must not be repeated in keywords), and the screenshot captions.
 
@@ -198,11 +198,11 @@ cp ../store/ExportOptions.plist ./ExportOptions.plist
 xcodebuild -project iosApp.xcodeproj -scheme iosApp \
   -configuration Release \
   -destination 'generic/platform=iOS' \
-  -archivePath build/Doorbell.xcarchive \
+  -archivePath build/Jukiza-Reminder.xcarchive \
   archive | tee /tmp/doorbell-archive.log
 
 xcodebuild -exportArchive \
-  -archivePath build/Doorbell.xcarchive \
+  -archivePath build/Jukiza-Reminder.xcarchive \
   -exportOptionsPlist ExportOptions.plist \
   -exportPath build/export | tee /tmp/doorbell-export.log
 ```
@@ -210,7 +210,7 @@ xcodebuild -exportArchive \
 Grep the logs for `error:` rather than reading them. Then upload the `.ipa`:
 
 ```sh
-xcrun altool --upload-app -f build/export/Doorbell.ipa -t ios \
+xcrun altool --upload-app -f build/export/Jukiza-Reminder.ipa -t ios \
   --apiKey <KEY_ID> --apiIssuer <ISSUER_ID>
 ```
 
@@ -277,7 +277,7 @@ Release build on a device.
       welcome.
 - [ ] **No hard-coded personal names** — the greeting must come from what the user typed, and start
       empty. Grep the Release build's strings for "Ali", "Ziwa", and any family names used while
-      testing: `strings build/export/Payload/Doorbell.app/Doorbell | grep -i -E 'ziwa|lorem|TODO'`.
+      testing: `strings build/export/Payload/Jukiza-Reminder.app/Jukiza-Reminder | grep -i -E 'ziwa|lorem|TODO'`.
 - [ ] **No references to other platforms** — guideline 2.3.10. Nothing in the UI, the settings
       screen, the empty states, or the screenshots may mention Android or link to another mobile
       store. Mentions of the Mac version are fine. The description in `store/listing.md` is already
@@ -312,7 +312,7 @@ Release build on a device.
    sample pack or a free-sounds site, find the licence page and keep a copy of it in `store/`. If
    it cannot be established, replace it — it is the one asset in this app that is not demonstrably
    original.
-2. **The app name.** "Doorbell" is a common word; check availability at the moment of creating the
+2. **The app name.** "Jukiza-Reminder" is a coined name, so a clash is unlikely; still check availability at the moment of creating the
    app record, and search the store for an existing app of the same name to avoid a 4.1 or
    trademark complaint later.
 3. **Screenshots** are generated by the iOS agent's script and are not yet in `store/screenshots/`.

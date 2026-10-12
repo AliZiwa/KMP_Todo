@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
   <!--
-    Doorbell — app icon master.
+    Jukiza-Reminder — app icon master.
     A doorbell push button, ringing, with a tick on the button face.
     Flat shapes only (rect / circle / arc / polyline): no gradients, filters, masks or text,
     so it converts losslessly to PNG, .icns and an Android VectorDrawable.

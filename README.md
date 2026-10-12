@@ -38,7 +38,7 @@ Design, contracts and the edge-case checklist: `docs/ARCHITECTURE.md`. Working r
 ## Platform notes and limits
 - **iOS** cannot keep an app running permanently or pin a status-bar item. The app uses a Live Activity (lock screen /
   Dynamic Island) plus time-sensitive notifications that re-alert every 2 minutes (10 times) until acted on. The App Store
-  build is called **Doorbell**; see `docs/APP_STORE.md` for the submission checklist and `store/` for listing assets.
+  build is called **Jukiza-Reminder**; see `docs/APP_STORE.md` for the submission checklist and `store/` for listing assets.
 - **Android** uses `setAlarmClock` exact alarms (install-time `USE_EXACT_ALARM`), a special-use foreground service and a
   full-screen alert over the lock screen. Accept the notification, full-screen-intent and battery-optimization prompts on
   first launch. On-device models must be `.litertlm` files (e.g. Gemma 3 1B from the `litert-community` org on Hugging Face).

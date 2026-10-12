@@ -1,4 +1,4 @@
-# Doorbell — Privacy Policy
+# Jukiza-Reminder — Privacy Policy
 
 **Effective 12 October 2026.**
 
@@ -8,11 +8,11 @@ it as-is).
 
 ---
 
-**Short version.** Doorbell has no account system, no analytics, no advertising and no server of
+**Short version.** Jukiza-Reminder has no account system, no analytics, no advertising and no server of
 its own. Everything you put into it stays in a database on your device. The developer never
 receives your data and has no way to.
 
-## What Doorbell stores, and where
+## What Jukiza-Reminder stores, and where
 
 On your device only, in a local SQLite database inside the app's own storage (shared with the
 home-screen widget through an app group so the widget can show your next task):
@@ -22,13 +22,13 @@ home-screen widget through an app group so the widget can show your next task):
 - **Your settings** — the assistant backend you chose, the time of the daily planning prompt, sound
   and notification preferences, and, if you pointed the assistant at your own LLM server, the
   address you typed.
-- **The name you type for the greeting** — if you give Doorbell a name so it can say "Good morning,
+- **The name you type for the greeting** — if you give Jukiza-Reminder a name so it can say "Good morning,
   …", that name is stored in the same local database. It is never sent anywhere. You can change or
   clear it in Settings.
 - **What you type into the assistant** — your messages and the tasks the assistant proposed, kept
   locally so the conversation is still there when you come back.
 
-## What Doorbell collects
+## What Jukiza-Reminder collects
 
 Nothing. There is no sign-in, no email address, no device identifier, no advertising identifier, no
 crash reporter, no analytics SDK and no third-party SDK that reports anything. The app contains no
@@ -37,7 +37,7 @@ data to.
 
 ## Notifications
 
-Doorbell asks for permission to send notifications, because a reminder that cannot reach you is not
+Jukiza-Reminder asks for permission to send notifications, because a reminder that cannot reach you is not
 a reminder. Notifications are created and delivered on your device by the operating system. They
 are not pushed from a server, so their contents — your task titles — are never transmitted over the
 internet. If you decline the permission the rest of the app still works; you simply will not be
@@ -45,7 +45,7 @@ alerted when the app is closed.
 
 ## The assistant and Apple Intelligence
 
-When you type something like "gym tomorrow at 7", Doorbell has to understand it. On iPhone and iPad
+When you type something like "gym tomorrow at 7", Jukiza-Reminder has to understand it. On iPhone and iPad
 it uses Apple Intelligence — Apple's Foundation Models, which run on the device itself. Your text is
 processed locally and is not sent to Apple, to the developer, or to anyone else. On a device without
 Apple Intelligence, a small rules-based parser built into the app does the same job, also entirely
@@ -66,18 +66,18 @@ run on it.
 The same applies if you ever use the model-download feature on a platform that offers it: the app
 downloads the file from the address you gave it, and nothing else.
 
-Apart from those two things — a server you configured, and a download you started — Doorbell makes
+Apart from those two things — a server you configured, and a download you started — Jukiza-Reminder makes
 no network requests at all. Every other feature works in airplane mode.
 
 ## No analytics, no advertising, no tracking
 
-Doorbell shows no ads, contains no advertising or attribution SDK, does not track you across apps or
+Jukiza-Reminder shows no ads, contains no advertising or attribution SDK, does not track you across apps or
 websites, does not build a profile of you, and does not sell or share anything with anyone, because
 it has nothing to sell or share.
 
 ## Children
 
-Doorbell does not collect personal information from anyone, of any age. It is rated 4+ and has no
+Jukiza-Reminder does not collect personal information from anyone, of any age. It is rated 4+ and has no
 accounts, no social features, no user-to-user messaging, no purchases and no web browsing. If you
 are a parent or guardian and have a question, write to the address below.
 

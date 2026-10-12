@@ -1,4 +1,4 @@
-# Doorbell — age rating, App Privacy, export compliance, content rights
+# Jukiza-Reminder — age rating, App Privacy, export compliance, content rights
 
 Everything App Store Connect will ask on the way to submission, answered. Version 1.0.
 
@@ -67,7 +67,7 @@ On the first question — *Do you or your third-party partners collect data from
 ### Why this is the correct answer, category by category
 
 Apple defines "collect" as transmitting data off the device in a way that makes it accessible to
-the developer or a partner for longer than needed to service the request. Doorbell transmits
+the developer or a partner for longer than needed to service the request. Jukiza-Reminder transmits
 nothing to the developer under any circumstance — there is no developer-operated server, no
 account system, no analytics SDK and no advertising SDK in the binary.
 
@@ -128,7 +128,7 @@ ever removed):
 | Which exemption? | *(b)(1) — the app uses, accesses, implements or incorporates encryption that is limited to standard encryption algorithms provided by Apple's operating system (HTTPS / TLS via URLSession), and performs no proprietary or non-standard cryptography.* |
 | Does your app implement any proprietary encryption algorithms? | **No** |
 
-Doorbell uses TLS only for two user-initiated things: fetching a model file the user asked for,
+Jukiza-Reminder uses TLS only for two user-initiated things: fetching a model file the user asked for,
 and talking to an LLM endpoint the user configured. Both go through the system networking stack.
 There is no custom crypto, no key exchange of the developer's own, no DRM.
 
@@ -146,7 +146,7 @@ France declaration: not required for apps relying solely on OS-provided exempt e
 | In-app illustrations | Original, drawn in Compose `Canvas` code (`shared/.../ui/Illustrations.kt`) — no raster assets, no stock art. |
 | Doorbell sound (`androidApp/.../raw/doorbell.wav` and the iOS equivalent) | **Confirm before submitting** that this file is original or carries a licence permitting commercial redistribution (CC0 / public domain is fine; a "non-commercial" or "attribution required" licence is not, without the attribution). See the open item at the bottom of `docs/APP_STORE.md`. |
 | Fonts | System fonts only (SF on Apple platforms). No licensed typefaces are bundled. |
-| App name "Doorbell" | Generic English word, used descriptively. No trademark claim is made or implied. |
+| App name "Jukiza-Reminder" | Coined name. Do a quick trademark search before submitting; no third-party mark is used. |
 
 ### Open-source components and their licences
 

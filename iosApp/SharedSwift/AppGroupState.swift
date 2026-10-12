@@ -4,7 +4,7 @@ import Foundation
 /// The App Group is how the sticky summary reaches the widget (the extension cannot talk to
 /// the Kotlin framework — it is not linked there).
 public enum AppGroup {
-    public static let identifier = "group.dev.aliziwa.todo"
+    public static let identifier = "group.dev.aliziwa.jukizareminder"
     public static let stickyKey = "sticky.summary.v1"
     public static let liveActivityId = "todo.next-task"
 

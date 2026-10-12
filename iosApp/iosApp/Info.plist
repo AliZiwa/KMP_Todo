@@ -4,15 +4,15 @@
 <dict>
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
-		<string>dev.aliziwa.todo.refresh</string>
-		<string>dev.aliziwa.todo.resync</string>
+		<string>dev.aliziwa.jukizareminder.refresh</string>
+		<string>dev.aliziwa.jukizareminder.resync</string>
 	</array>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>Doorbell</string>
+	<string>Jukiza-Reminder</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -34,13 +34,13 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSLocalNetworkUsageDescription</key>
-	<string>Doorbell only talks to a local LLM server if you add one in Settings, e.g. Ollama on your Mac.</string>
+	<string>Jukiza-Reminder only talks to a local LLM server if you add one in Settings, e.g. Ollama on your Mac.</string>
 	<key>NSSupportsLiveActivities</key>
 	<true/>
 	<key>NSSupportsLiveActivitiesFrequentUpdates</key>
 	<true/>
 	<key>NSUserNotificationsUsageDescription</key>
-	<string>Doorbell uses notifications to ring a doorbell when a task becomes due and to ask you to plan your day each morning.</string>
+	<string>Jukiza-Reminder uses notifications to ring a doorbell when a task becomes due and to ask you to plan your day each morning.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>

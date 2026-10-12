@@ -7,8 +7,8 @@ import UserNotifications
 /// action buttons (which can launch the app from scratch) and background refresh.
 final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
 
-    static let refreshTaskId = "dev.aliziwa.todo.refresh"
-    static let resyncTaskId = "dev.aliziwa.todo.resync"
+    static let refreshTaskId = "dev.aliziwa.jukizareminder.refresh"
+    static let resyncTaskId = "dev.aliziwa.jukizareminder.resync"
 
     func application(
         _ application: UIApplication,
@@ -40,7 +40,7 @@ final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCent
     }
 
     /// Screenshot / demo hooks:
-    ///   xcrun simctl launch booted dev.aliziwa.todo -todoDebugSeedDemo 1 -todoDebugRoute chat
+    ///   xcrun simctl launch booted dev.aliziwa.jukizareminder -todoDebugSeedDemo 1 -todoDebugRoute chat
     private func applyDebugLaunchFlags() {
         #if DEBUG
         if UserDefaults.standard.bool(forKey: "todoDebugSeedDemo"), let graph = Bootstrap.shared.graph {
@@ -67,7 +67,7 @@ final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCent
     }
 
     /// Dev-only hook used to verify the alarm path end to end without a UI:
-    ///   xcrun simctl launch booted dev.aliziwa.todo -todoDebugAlarmSeconds 10
+    ///   xcrun simctl launch booted dev.aliziwa.jukizareminder -todoDebugAlarmSeconds 10
     private func scheduleDebugAlarmIfRequested() {
         #if DEBUG
         if UserDefaults.standard.bool(forKey: "todoDebugSticky") {

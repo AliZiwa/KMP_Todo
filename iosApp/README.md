@@ -1,10 +1,10 @@
-# iosApp — Doorbell
+# iosApp — Jukiza-Reminder
 
 SwiftUI host for the shared Compose UI (`Shared.framework`, built from `shared/src/iosMain`),
 plus the iOS implementations of the platform ports and the `TodoWidgets` WidgetKit extension
 (Live Activity + home-screen widget).
 
-The product is **Doorbell** (`dev.aliziwa.todo`, team `487Q4488BH`). `iosApp.xcodeproj` is generated
+The product is **Jukiza-Reminder** (`dev.aliziwa.jukizareminder`, team `487Q4488BH`). `iosApp.xcodeproj` is generated
 from `project.yml` by `xcodegen` — regenerate it after every `project.yml` change and commit the
 result.
 
@@ -53,8 +53,8 @@ xcodebuild -project iosApp/iosApp.xcodeproj -scheme iosApp \
   -derivedDataPath iosApp/DerivedData build
 
 xcrun simctl boot "iPhone 18 Pro"
-xcrun simctl install booted iosApp/DerivedData/Build/Products/Debug-iphonesimulator/Doorbell.app
-xcrun simctl launch booted dev.aliziwa.todo
+xcrun simctl install booted iosApp/DerivedData/Build/Products/Debug-iphonesimulator/Jukiza-Reminder.app
+xcrun simctl launch booted dev.aliziwa.jukizareminder
 ```
 
 The `Build Kotlin framework` run-script phase invokes
@@ -69,10 +69,10 @@ archive work out of the box once Xcode is signed in to that team (Xcode ▸ Sett
 ```sh
 xcodebuild -project iosApp/iosApp.xcodeproj -scheme iosApp -configuration Release \
   -destination 'generic/platform=iOS' \
-  -archivePath iosApp/DerivedData/Doorbell.xcarchive archive -allowProvisioningUpdates
+  -archivePath iosApp/DerivedData/Jukiza-Reminder.xcarchive archive -allowProvisioningUpdates
 ```
 
-The app and the widget share the `group.dev.aliziwa.todo` App Group and the app declares
+The app and the widget share the `group.dev.aliziwa.jukizareminder` App Group and the app declares
 `com.apple.developer.usernotifications.time-sensitive`; automatic signing provisions both.
 Uploading to App Store Connect additionally needs an **Apple Distribution** certificate — do that
 from Xcode's Organizer.
@@ -87,7 +87,7 @@ the last one because the Kotlin/Native runtime calls `mach_absolute_time`).
 Useful in a headless simulator, where alerts and the keyboard cannot be tapped:
 
 ```sh
-xcrun simctl launch booted dev.aliziwa.todo \
+xcrun simctl launch booted dev.aliziwa.jukizareminder \
   -todoDebugProvisional 1 \            # provisional auth: no (untappable) notification prompt
   -todoDebugSeedDemo 1 \               # DemoData.seed — App Store-worthy fake day
   -todoDebugRoute chat \               # today | add | plan | chat | settings | task/<id> | alert/<id>

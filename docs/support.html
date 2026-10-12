@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Doorbell — Support</title>
+<title>Jukiza-Reminder — Support</title>
 <meta name="color-scheme" content="light dark">
 <style>
   :root {
@@ -61,10 +61,10 @@
 <body>
 <div class="wrap">
 <header>
-  <svg class="mark" viewBox="0 0 1024 1024" role="img" aria-label="Doorbell app icon"><rect width="1024" height="1024" fill="#F2654E"/><g fill="none" stroke="#FFCBBB" stroke-width="50" stroke-linecap="round"><path d="M785.3 248 A380 380 0 0 1 785.3 776"/><path d="M238.7 248 A380 380 0 0 0 238.7 776"/></g><circle cx="512" cy="512" r="296" fill="#FFF8F5"/><circle cx="512" cy="512" r="220" fill="#12948B"/><path d="M402 516 L480 596 L624 440" fill="none" stroke="#FFF8F5" stroke-width="64" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  <svg class="mark" viewBox="0 0 1024 1024" role="img" aria-label="Jukiza-Reminder app icon"><rect width="1024" height="1024" fill="#F2654E"/><g fill="none" stroke="#FFCBBB" stroke-width="50" stroke-linecap="round"><path d="M785.3 248 A380 380 0 0 1 785.3 776"/><path d="M238.7 248 A380 380 0 0 0 238.7 776"/></g><circle cx="512" cy="512" r="296" fill="#FFF8F5"/><circle cx="512" cy="512" r="220" fill="#12948B"/><path d="M402 516 L480 596 L624 440" fill="none" stroke="#FFF8F5" stroke-width="64" stroke-linecap="round" stroke-linejoin="round"/></svg>
   <h1>Support</h1>
   <p class="lede">Something not ringing? Start here, then write to me.</p>
-  <p class="meta"><a href="index.html">Doorbell</a> &middot; <a href="privacy.html">Privacy</a></p>
+  <p class="meta"><a href="index.html">Jukiza-Reminder</a> &middot; <a href="privacy.html">Privacy</a></p>
 </header>
 
 <div class="card">
@@ -79,11 +79,11 @@
   <p class="q">A task was due and nothing happened.</p>
   <p class="a">Four things, in order of how often they are the cause:</p>
   <ul>
-    <li><strong>Notification permission.</strong> Settings &rsaquo; Doorbell &rsaquo; Notifications
+    <li><strong>Notification permission.</strong> Settings &rsaquo; Jukiza-Reminder &rsaquo; Notifications
         &mdash; Allow Notifications on, and Lock Screen, Notification Centre and Banners all ticked.</li>
-    <li><strong>Focus or Do Not Disturb.</strong> Doorbell marks its due alerts as time-sensitive so
+    <li><strong>Focus or Do Not Disturb.</strong> Jukiza-Reminder marks its due alerts as time-sensitive so
         they can break through a Focus, but a Focus can still be set to block them. In Settings
-        &rsaquo; Focus &rsaquo; <em>(your focus)</em> &rsaquo; Apps, allow Doorbell, and leave
+        &rsaquo; Focus &rsaquo; <em>(your focus)</em> &rsaquo; Apps, allow Jukiza-Reminder, and leave
         &ldquo;Time Sensitive Notifications&rdquo; on.</li>
     <li><strong>Silent switch or volume.</strong> The doorbell is a sound; the ring/silent switch
         and the ringer volume both apply.</li>
@@ -96,7 +96,7 @@
   <p class="q">The assistant says Apple Intelligence is not available.</p>
   <p class="a">The on-device assistant uses Apple&rsquo;s Foundation Models, which need iOS&nbsp;26
   and an Apple&nbsp;Intelligence-capable device, with Apple Intelligence switched on in
-  Settings &rsaquo; Apple Intelligence &amp; Siri. On a device that cannot run it, Doorbell quietly
+  Settings &rsaquo; Apple Intelligence &amp; Siri. On a device that cannot run it, Jukiza-Reminder quietly
   falls back to its own rules-based parser &mdash; that is not an error, and phrases like
   &ldquo;gym tomorrow at 7&rdquo; or &ldquo;call mum every day at 18:00&rdquo; still work. The more
   conversational requests are the ones you will miss.</p>
@@ -104,19 +104,19 @@
 
 <div class="card">
   <p class="q">How do I connect my own LLM (Ollama)?</p>
-  <p class="a">Run the server on a machine on the same network, then point Doorbell at it:</p>
+  <p class="a">Run the server on a machine on the same network, then point Jukiza-Reminder at it:</p>
   <ul>
     <li>On the machine running Ollama, make it listen beyond localhost:
         <code>OLLAMA_HOST=0.0.0.0:11434 ollama serve</code>, and pull a model, e.g.
         <code>ollama pull llama3.2</code>.</li>
     <li>Find that machine&rsquo;s address on your network (something like <code>192.168.1.20</code>).</li>
-    <li>In Doorbell: Settings &rsaquo; Assistant &rsaquo; Local server. Enter
+    <li>In Jukiza-Reminder: Settings &rsaquo; Assistant &rsaquo; Local server. Enter
         <code>http://192.168.1.20:11434</code> and the model name, then tap Test.</li>
     <li>The first time, iOS asks for permission to find devices on your local network. Say yes, or
         the connection will silently fail.</li>
   </ul>
   <p class="a">Anything with an OpenAI-compatible <code>/v1/chat/completions</code> endpoint works
-  the same way. This is the only network connection Doorbell ever makes, and only because you set
+  the same way. This is the only network connection Jukiza-Reminder ever makes, and only because you set
   it up.</p>
 </div>
 
@@ -131,9 +131,9 @@
   <p class="q">The widget or Live Activity is not showing.</p>
   <p class="a">The <strong>Live Activity</strong> appears on the lock screen and in the Dynamic
   Island only when you have a task due later today; it disappears once the day&rsquo;s tasks are
-  done. Check Settings &rsaquo; Doorbell &rsaquo; Live Activities is on.</p>
+  done. Check Settings &rsaquo; Jukiza-Reminder &rsaquo; Live Activities is on.</p>
   <p class="a">The <strong>widget</strong> is added the usual way: long-press the home screen, tap
-  the <strong>+</strong>, search for Doorbell, and drag the size you want. It refreshes when tasks
+  the <strong>+</strong>, search for Jukiza-Reminder, and drag the size you want. It refreshes when tasks
   change and on the system&rsquo;s own schedule, so give it a minute after a change.</p>
 </div>
 
@@ -145,7 +145,7 @@
 
 <div class="card">
   <p class="q">How do I delete everything?</p>
-  <p class="a">Delete the app. Everything Doorbell knows lives inside the app on your device, so
+  <p class="a">Delete the app. Everything Jukiza-Reminder knows lives inside the app on your device, so
   removing it removes the lot. There is no account to close and no copy held anywhere else.</p>
 </div>
 
@@ -156,7 +156,7 @@
 </div>
 
 <footer>
-  <p><a href="index.html">Doorbell</a> &middot; <a href="privacy.html">Privacy</a></p>
+  <p><a href="index.html">Jukiza-Reminder</a> &middot; <a href="privacy.html">Privacy</a></p>
   <p>&copy; 2026 Ali Ziwa</p>
 </footer>
 

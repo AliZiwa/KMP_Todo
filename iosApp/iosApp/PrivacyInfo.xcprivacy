@@ -2,7 +2,7 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<!-- Doorbell is offline-first: nothing is collected, nothing leaves the device except a
+	<!-- Jukiza-Reminder is offline-first: nothing is collected, nothing leaves the device except a
 	     user-configured local LLM endpoint. -->
 	<key>NSPrivacyTracking</key>
 	<false/>

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# App Store screenshots for Doorbell.
+# App Store screenshots for Jukiza-Reminder.
 #
 #   export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
 #   iosApp/scripts/screenshots.sh                 # both device classes, light + dark
@@ -16,8 +16,8 @@ set -euo pipefail
 cd "$(dirname "$0")/../.."
 ROOT="$PWD"
 OUT="$ROOT/store/screenshots"
-APP="$ROOT/iosApp/DerivedData/Build/Products/Debug-iphonesimulator/Doorbell.app"
-BUNDLE_ID="dev.aliziwa.todo"
+APP="$ROOT/iosApp/DerivedData/Build/Products/Debug-iphonesimulator/Jukiza-Reminder.app"
+BUNDLE_ID="dev.aliziwa.jukizareminder"
 
 : "${DEVELOPER_DIR:=/Applications/Xcode.app/Contents/Developer}"
 export DEVELOPER_DIR
@@ -59,7 +59,7 @@ shoot() {           # shoot <udid> <dir> <index> <route>
 }
 
 if [ "$SKIP_BUILD" != "1" ]; then
-  log "Building Doorbell.app (Debug, simulator)"
+  log "Building Jukiza-Reminder.app (Debug, simulator)"
   # A concrete simulator, not 'generic/platform=iOS Simulator': the generic destination adds
   # x86_64 to ARCHS and Compose's syncComposeResourcesForIos rejects that arch.
   xcodebuild -project iosApp/iosApp.xcodeproj -scheme iosApp \
